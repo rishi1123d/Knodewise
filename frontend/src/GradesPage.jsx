@@ -60,7 +60,7 @@ function GradesPage() {
         style={imageStyle}
       />
       <button 
-        onClick={() => navigate('/knowledge-map')}
+        onClick={() => navigate('/student/knowledge-map')}
         style={buttonStyle}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
