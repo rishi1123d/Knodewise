@@ -1,19 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import GradesPage from './GradesPage';
-import KnowledgeTree from './kg';
-// import './kg.css';
-// import '@fortawesome/fontawesome-free/css/all.min.css';
+import { BrowserRouter as Router } from 'react-router-dom';
+import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<GradesPage />} />
-        <Route path="/knowledge-map" element={<KnowledgeTree />} />
-      </Routes>
-    </BrowserRouter>
+    <Router>
+      <App />
+    </Router>
   </React.StrictMode>
 ); 
