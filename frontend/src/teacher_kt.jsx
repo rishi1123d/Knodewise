@@ -388,31 +388,60 @@ const MultivariableCalculusTree = () => {
   // Update progress for all directory and root nodes
   const updateParentProgress = () => {
     setNodes(prevNodes => {
-      // First create a copy of the nodes
+      // Create a copy of the nodes
       const updatedNodes = [...prevNodes];
       
-      // Start with leaf nodes and work upwards
-      const directoryNodes = updatedNodes.filter(n => n.type === 'directory' || n.type === 'root');
+      // First handle leaf nodes to make sure their progress is up to date
+      const leafNodes = updatedNodes.filter(n => n.type === 'leaf');
+      leafNodes.forEach(leafNode => {
+        if (leafNode.questions && leafNode.questions.length > 0) {
+          const correct = leafNode.questions.filter(q => q.correct === true).length;
+          const total = leafNode.questions.length;
+          const nodeIndex = updatedNodes.findIndex(n => n.id === leafNode.id);
+          if (nodeIndex !== -1) {
+            updatedNodes[nodeIndex] = {
+              ...updatedNodes[nodeIndex],
+              progress: { correct, total }
+            };
+          }
+        }
+      });
       
+      // Create a map to track the total corrects and totals for the entire tree
+      const totalStats = {
+        correct: 0,
+        total: 0
+      };
+      
+      // Count all unlocked leaf node stats for overall progress
+      leafNodes.forEach(leafNode => {
+        if (!leafNode.locked) {
+          totalStats.correct += leafNode.progress.correct;
+          totalStats.total += leafNode.progress.total;
+        }
+      });
+      
+      // Now process directory nodes from bottom up
+      // First get all directory nodes and sort them by depth (children first)
+      const directoryNodes = updatedNodes.filter(n => n.type === 'directory').sort((a, b) => {
+        // Simple approximation: nodes with more child directories are likely deeper
+        const aChildDirs = updatedNodes.filter(n => n.parentId === a.id && n.type === 'directory').length;
+        const bChildDirs = updatedNodes.filter(n => n.parentId === b.id && n.type === 'directory').length;
+        return bChildDirs - aChildDirs;
+      });
+      
+      // Process each directory to update its progress
       directoryNodes.forEach(dirNode => {
         const childProgress = { correct: 0, total: 0 };
         let hasChildren = false;
         
-        // Collect progress from all children that are not locked
+        // Collect progress from direct children only if they are not locked
         dirNode.children.forEach(childId => {
-          const childNode = findNodeById(childId, updatedNodes);
+          const childNode = updatedNodes.find(n => n.id === childId);
           if (childNode && !childNode.locked) {
             hasChildren = true;
-            if (childNode.type === 'leaf') {
-              childProgress.correct += childNode.progress.correct;
-              childProgress.total += childNode.progress.total;
-            } else {
-              // For directory nodes, include their progress too if they have valid progress
-              if (childNode.progress && childNode.progress.total > 0) {
-                childProgress.correct += childNode.progress.correct;
-                childProgress.total += childNode.progress.total;
-              }
-            }
+            childProgress.correct += childNode.progress.correct;
+            childProgress.total += childNode.progress.total;
           }
         });
         
@@ -426,6 +455,22 @@ const MultivariableCalculusTree = () => {
           };
         }
       });
+      
+      // Finally, update the root node with overall stats from all unlocked leaf nodes
+      const rootNode = updatedNodes.find(n => n.type === 'root');
+      if (rootNode) {
+        const rootIndex = updatedNodes.findIndex(n => n.id === rootNode.id);
+        if (rootIndex !== -1) {
+          updatedNodes[rootIndex] = {
+            ...updatedNodes[rootIndex],
+            progress: { 
+              correct: totalStats.correct, 
+              total: totalStats.total 
+            },
+            hasChildren: totalStats.total > 0
+          };
+        }
+      }
       
       return updatedNodes;
     });
@@ -465,16 +510,11 @@ const MultivariableCalculusTree = () => {
           node
       );
       
-      // Find the parent to update its progress
-      const parentId = updatedNode.parentId;
-      if (!parentId) {
-        // If no parent (root node), just update all directory nodes recursively
-        setTimeout(() => updateParentProgress(), 0);
-        return nodesWithLockUpdated;
-      }
-      
       return nodesWithLockUpdated;
     });
+    
+    // Update progress calculations after toggling lock status
+    setTimeout(() => updateParentProgress(), 0);
   };
 
   // Mark a question as correct or incorrect
@@ -499,45 +539,11 @@ const MultivariableCalculusTree = () => {
         return node;
       });
       
-      // Then update all parent nodes recursively
-      const updateParentProgress = (nodesList, childId) => {
-        const childNode = nodesList.find(n => n.id === childId);
-        if (!childNode || !childNode.parentId) return nodesList;
-        
-        const parentNode = nodesList.find(n => n.id === childNode.parentId);
-        if (!parentNode) return nodesList;
-        
-        // Calculate total progress across all children that are not locked
-        let totalCorrect = 0;
-        let totalQuestions = 0;
-        let hasChildren = false;
-        
-        parentNode.children.forEach(id => {
-          const child = nodesList.find(n => n.id === id);
-          if (child && !child.locked) {
-            hasChildren = true;
-            totalCorrect += child.progress.correct;
-            totalQuestions += child.progress.total;
-          }
-        });
-        
-        // Update parent's progress
-        const updatedList = nodesList.map(n => 
-          n.id === parentNode.id ? 
-            { ...n, progress: { correct: totalCorrect, total: totalQuestions }, hasChildren } : 
-            n
-        );
-        
-        // Continue up the tree if there are more parents
-        if (parentNode.parentId) {
-          return updateParentProgress(updatedList, parentNode.id);
-        }
-        
-        return updatedList;
-      };
-      
-      return updateParentProgress(updatedNodes, nodeId);
+      return updatedNodes;
     });
+    
+    // Then update all parent nodes recursively
+    setTimeout(() => updateParentProgress(), 0);
   };
 
   // Function to create a modal dialog for user input
