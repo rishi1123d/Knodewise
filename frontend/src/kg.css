@@ -1,363 +1,335 @@
-/* Base styles for the knowledge tree */
-.knowledge-tree-container {
-  width: 100%;
-  min-height: 800px;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border: 1px solid #e0e0e0;
-  font-family: Arial, sans-serif;
-  position: relative;
-  overflow: auto;
+/* styles.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
 }
 
-/* Node styles */
+body {
+  background-color: #f5f5f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.mind-map-container {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.mind-map {
+  width: 2400px;
+  height: 1600px;
+  position: relative;
+  margin: 0 auto;
+  transform-origin: center center;
+}
+
 .node {
-  background-color: #e7e7e7;
-  border: 2px solid #4CAF50;
+  position: absolute;
+  background-color: #e0e0e0;
+  border: 2px solid #4caf50;
   border-radius: 15px;
   padding: 10px 15px;
   text-align: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  display: inline-block;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
   position: relative;
 }
 
-.node h2, .node h3, .node h4 {
-  margin: 0;
-  color: #333;
-}
-
-.node h2 {
-  font-size: 20px;
-}
-
-.node h3 {
-  font-size: 16px;
-}
-
-.node h4 {
-  font-size: 14px;
-}
-
-/* Root node specific styles */
-.root-node {
-  width: 240px;
-  padding: 15px;
-  margin: 0 auto;
-  position: absolute;
-  top: 45%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+.node:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   z-index: 10;
 }
 
-.understanding-level {
-  background-color: #4CAF50;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 20px;
-  margin-top: 10px;
-  font-size: 14px;
+.node.dragging {
+  cursor: grabbing;
+  opacity: 0.8;
+  z-index: 100;
 }
 
-/* Topic nodes */
-.topic-node {
-  width: 180px;
-  position: absolute;
+.node.root {
+  width: 240px;
+  height: 140px;
+  font-size: 24px;
+  font-weight: bold;
+  z-index: 5;
+  background-color: #e8f5e9;
 }
 
-.limits-topic {
-  top: -170px;
-  left: -100px;
+.node.directory {
+  width: 200px;
+  height: 100px;
+  font-size: 18px;
+  font-weight: bold;
+  z-index: 4;
+  background-color: #f0f7f0;
 }
 
-.derivatives-topic {
-  top: 0;
-  right: -300px;
-}
-
-/* Subtopic nodes */
-.subtopic-node {
+.node.leaf {
   width: 150px;
+  height: 80px;
+  font-size: 14px;
+  z-index: 3;
+}
+
+.node.expanded {
+  width: 300px;
+  height: auto;
+  min-height: 150px;
+  z-index: 50;
+}
+
+.node .title-input {
+  border: none;
+  background: transparent;
+  font-size: inherit;
+  text-align: center;
+  width: 90%;
+  border-bottom: 1px solid #4caf50;
+  outline: none;
+  margin-bottom: 5px;
+}
+
+.add-button {
   position: absolute;
-}
-
-.limits-at-point {
-  top: -100px;
-  left: 0;
-}
-
-.continuity {
-  top: -100px;
-  right: -50px;
-}
-
-.derivative-rules {
-  top: -50px;
-  right: -240px;
-}
-
-/* Concept nodes */
-.concept-node {
-  background-color: #e7e7e7;
-  border: 2px solid #4CAF50;
-  border-radius: 25px;
-  padding: 8px 15px;
-  font-size: 12px;
+  bottom: -10px;
+  right: -10px;
+  width: 25px;
+  height: 25px;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 50%;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  margin: 5px;
-  min-width: 110px;
-  position: absolute;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 6;
+}
+
+.add-button:hover {
+  background-color: #388e3c;
 }
 
 .score {
-  font-size: 10px;
   margin-top: 5px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
 }
 
-/* Progress pills */
-.progress-pill {
-  padding: 3px 10px;
-  border-radius: 15px;
-  color: white;
+.high {
+  background-color: #4caf50;
+}
+
+.medium {
+  background-color: #ffc107;
+}
+
+.low {
+  background-color: #f44336;
+}
+
+.fraction {
   font-size: 12px;
   margin-top: 5px;
-  display: inline-block;
+  color: #555;
+  cursor: pointer;
 }
 
-.green {
-  background-color: #4CAF50;
+.questions-list {
+  display: none;
+  width: 100%;
+  margin-top: 10px;
+  text-align: left;
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
 }
 
-.yellow {
-  background-color: #FFC107;
+.questions-list.visible {
+  display: block;
 }
 
-.red {
-  background-color: #F44336;
-}
-
-/* Locked nodes */
-.locked-node {
-  width: 140px;
-  background-color: #e0e0e0;
-  border-color: #9E9E9E;
-  opacity: 0.8;
-  position: absolute;
-}
-
-.lock-icon {
-  background-color: #9E9E9E;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
+.question-item {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  margin: 10px auto 0;
+  margin-bottom: 5px;
+  font-size: 12px;
 }
 
-.lock-icon i {
+.question-text {
+  flex-grow: 1;
+  padding-right: 10px;
+}
+
+.question-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.question-actions button {
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
+}
+
+.correct-btn {
+  background-color: #4caf50;
   color: white;
 }
 
-/* Branch connectors using positioning */
-.branches {
-  position: relative;
+.wrong-btn {
+  background-color: #f44336;
+  color: white;
 }
 
-.branch {
+.add-question-btn {
+  margin-top: 5px;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 3px 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.connector {
   position: absolute;
-}
-
-/* Integration Techniques positioning */
-.integration-branch {
-  top: -150px;
-  left: -320px;
-}
-
-/* Differential Equations positioning */
-.differential-branch {
-  top: 50px;
-  left: -320px;
-}
-
-/* Series positioning */
-.series-branch {
-  top: 200px;
-  left: -250px;
-}
-
-/* Integrals positioning */
-.integrals-branch {
-  top: 200px;
-  right: -250px;
-}
-
-/* Concept node positioning */
-/* Limits section */
-.one-sided {
-  top: -70px;
-  left: -80px;
-}
-
-.infinite-limits {
-  top: -110px;
-  left: 30px;
-}
-
-.limits-infinity {
-  top: -70px;
-  right: -80px;
-}
-
-/* Continuity section */
-.removable {
-  top: -70px;
-  right: -50px;
-}
-
-.jump {
-  top: -10px;
-  right: -100px;
-}
-
-.infinite {
-  top: 50px;
-  right: -50px;
-}
-
-/* Derivative rules section */
-.power-rule {
-  top: -70px;
-  right: -110px;
-}
-
-.product-rule {
-  top: -10px;
-  right: -110px;
-}
-
-.chain-rule {
-  top: 50px;
-  right: -110px;
-}
-
-/* Lines connecting nodes (using pseudo-elements) */
-.branch::before,
-.sub-branch::before,
-.concept-branches::before {
-  content: '';
-  position: absolute;
-  background-color: #4CAF50;
-  z-index: -1;
-}
-
-/* Horizontal branch lines */
-.limits-branch::before {
-  width: 100px;
+  background-color: #4caf50;
   height: 2px;
-  top: 50%;
-  left: -100px;
+  transform-origin: 0 0;
+  z-index: 1;
+  pointer-events: none;
 }
 
-.derivatives-branch::before {
-  width: 100px;
-  height: 2px;
-  top: 50%;
-  right: -100px;
+.controls {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 1000;
 }
 
-.integration-branch::before,
-.differential-branch::before,
-.series-branch::before,
-.integrals-branch::before {
-  width: 70px;
-  height: 2px;
-  top: 50%;
+.controls button {
+  padding: 10px 15px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  font-weight: bold;
 }
 
-.integration-branch::before,
-.differential-branch::before,
-.series-branch::before {
-  right: -70px;
+.controls button:hover {
+  background-color: #388e3c;
 }
 
-.integrals-branch::before {
-  left: -70px;
+.status {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 1000;
+  font-size: 14px;
 }
 
-/* Vertical sub-branch lines */
-.limits-sub::before,
-.derivatives-sub::before {
-  width: 2px;
-  height: 80px;
-  left: 50%;
+/* Modal overlays */
+.node-form-overlay,
+.question-form-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
 }
 
-.concept-branches::before {
-  width: 2px;
-  height: 150px;
-  left: 50%;
-  top: -50px;
+.node-form,
+.question-form {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-/* Additional styling */
-/* Override for specific connections */
-.sub-branches, .concept-branches {
-  position: relative;
+.form-group {
+  margin-bottom: 15px;
 }
 
-/* Add specific line connections for sub-branches */
-.limits-sub::after,
-.derivatives-sub::after {
-  content: '';
-  position: absolute;
-  width: 2px;
-  height: 50px;
-  background-color: #4CAF50;
-  left: 50%;
-  bottom: 100%;
-  z-index: -1;
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
 }
 
-/* Media queries for responsive design */
-@media (max-width: 1200px) {
-  .root-node {
-    position: relative;
-    top: 0;
-    left: 0;
-    transform: none;
-    margin: 20px auto;
-  }
-  
-  .topic-node, .subtopic-node, .concept-node, .locked-node {
-    position: relative;
-    top: auto;
-    left: auto;
-    right: auto;
-    margin: 20px auto;
-  }
-  
-  .branch, .sub-branch {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 20px 0;
-  }
-  
-  .branches {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .concept-branches {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.radio-group {
+  display: flex;
+  gap: 20px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.form-actions button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#saveNodeBtn,
+#saveQuestionBtn {
+  background-color: #4caf50;
+  color: white;
+}
+
+#cancelNodeBtn,
+#cancelQuestionBtn {
+  background-color: #f44336;
+  color: white;
 }
