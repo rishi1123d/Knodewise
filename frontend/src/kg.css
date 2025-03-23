@@ -1,4 +1,4 @@
-/* styles.css */
+/* Mind Map Styles with SVG-based Connections */
 * {
   margin: 0;
   padding: 0;
@@ -16,21 +16,49 @@ body {
   overflow: hidden;
 }
 
-.mind-map-container {
+.mind-map-app {
   width: 100%;
   height: 100vh;
   position: relative;
   overflow: hidden;
 }
 
+.mind-map-container {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+}
+
+.mind-map-container.dragging {
+  cursor: grabbing;
+}
+
 .mind-map {
   width: 2400px;
   height: 1600px;
-  position: relative;
-  margin: 0 auto;
+  position: absolute;
   transform-origin: center center;
 }
 
+/* SVG connection layer */
+.connections-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.connector-line {
+  stroke-linecap: round;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+}
+
+/* Node styling */
 .node {
   position: absolute;
   background-color: #e0e0e0;
@@ -45,7 +73,7 @@ body {
   justify-content: center;
   align-items: center;
   cursor: grab;
-  position: relative;
+  z-index: 3;
 }
 
 .node:hover {
@@ -56,7 +84,7 @@ body {
 
 .node.dragging {
   cursor: grabbing;
-  opacity: 0.8;
+  opacity: 0.9;
   z-index: 100;
 }
 
@@ -65,8 +93,10 @@ body {
   height: 140px;
   font-size: 24px;
   font-weight: bold;
-  z-index: 5;
   background-color: #e8f5e9;
+  border: 3px solid #4caf50;
+  z-index: 10;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
 .node.directory {
@@ -74,7 +104,6 @@ body {
   height: 100px;
   font-size: 18px;
   font-weight: bold;
-  z-index: 4;
   background-color: #f0f7f0;
 }
 
@@ -82,7 +111,6 @@ body {
   width: 150px;
   height: 80px;
   font-size: 14px;
-  z-index: 3;
 }
 
 .node.expanded {
@@ -121,11 +149,33 @@ body {
   z-index: 6;
 }
 
+.delete-button {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 25px;
+  height: 25px;
+  background-color: #f44336;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 6;
+}
+
 .add-button:hover {
   background-color: #388e3c;
 }
 
-.score {
+.delete-button:hover {
+  background-color: #d32f2f;
+}
+
+.progress {
   margin-top: 5px;
   padding: 2px 8px;
   border-radius: 10px;
@@ -217,15 +267,6 @@ body {
   cursor: pointer;
 }
 
-.connector {
-  position: absolute;
-  background-color: #4caf50;
-  height: 2px;
-  transform-origin: 0 0;
-  z-index: 1;
-  pointer-events: none;
-}
-
 .controls {
   position: fixed;
   bottom: 20px;
@@ -265,14 +306,13 @@ body {
 /* Modal overlays */
 .node-form-overlay,
 .question-form-overlay {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+  z-index: 1100;
   justify-content: center;
   align-items: center;
 }
@@ -284,6 +324,8 @@ body {
   border-radius: 10px;
   width: 400px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1200;
 }
 
 .form-group {
@@ -322,14 +364,12 @@ body {
   cursor: pointer;
 }
 
-#saveNodeBtn,
-#saveQuestionBtn {
+.form-actions button:first-child {
   background-color: #4caf50;
   color: white;
 }
 
-#cancelNodeBtn,
-#cancelQuestionBtn {
+.form-actions button:last-child {
   background-color: #f44336;
   color: white;
 }
