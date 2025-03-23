@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
 import * as THREE from "three"
+import { useLocation } from "react-router-dom"
 
 const AiTutor = () => {
   const containerRef = useRef(null)
@@ -17,6 +18,71 @@ const AiTutor = () => {
   const [isSpeaking, setIsSpeaking] = useState(false)
   const [inputMode, setInputMode] = useState("chat") // "chat" or "voice"
   const [renderError, setRenderError] = useState(false)
+  const location = useLocation()
+  const [showBrowseProblems, setShowBrowseProblems] = useState(false)
+  const [availableProblems] = useState([
+    {
+      id: 'q-a1-1',
+      text: 'What is the domain of f(x,y) = ln(1-x²-y²)?',
+      node: 'A.1 Multivariable Functions',
+      section: 'A. Vectors and Parameterization'
+    },
+    {
+      id: 'q-a1-2',
+      text: 'Define a multivariable function and give an example.',
+      node: 'A.1 Multivariable Functions',
+      section: 'A. Vectors and Parameterization'
+    },
+    {
+      id: 'q-a2-1',
+      text: 'Calculate |3i + 4j - 5k|',
+      node: 'A.2 Vector Algebra and Matrices',
+      section: 'A. Vectors and Parameterization'
+    },
+    {
+      id: 'q-a2-2',
+      text: 'Find the matrix product AB if A = [[1,2],[3,4]] and B = [[5,6],[7,8]]',
+      node: 'A.2 Vector Algebra and Matrices',
+      section: 'A. Vectors and Parameterization'
+    },
+    {
+      id: 'q-a3-1',
+      text: 'Find the angle between vectors [1,2,3] and [4,5,6]',
+      node: 'A.3 Dot Product and Cross Product',
+      section: 'A. Vectors and Parameterization'
+    },
+    {
+      id: 'q-b1-1',
+      text: 'Sketch the level curves of f(x,y) = x² + y²',
+      node: 'B.1 Graphs and Level Sets',
+      section: 'B. Differentiation'
+    }
+  ])
+  
+  // Check for a pre-populated question on component mount
+  useEffect(() => {
+    // First check URL search params (for direct links)
+    const params = new URLSearchParams(location.search)
+    const urlQuestion = params.get('question')
+    
+    // Then check localStorage (for internal navigation)
+    const storedQuestion = localStorage.getItem('aiTutorQuestion')
+    
+    if (urlQuestion) {
+      setQuestion(urlQuestion)
+      // Optional: Auto-submit after a short delay
+      /*
+      const timer = setTimeout(() => {
+        handleQuestionSubmit(new Event('submit'))
+      }, 1000)
+      return () => clearTimeout(timer)
+      */
+    } else if (storedQuestion) {
+      setQuestion(storedQuestion)
+      // Clear localStorage after using the question
+      localStorage.removeItem('aiTutorQuestion')
+    }
+  }, [location.search])
 
   const initThreeJS = () => {
     try {
@@ -327,7 +393,7 @@ const AiTutor = () => {
     }
   }, [isProcessing, isSpeaking])
 
-  const handleQuestionSubmit = async (e) => {
+  const handleQuestionSubmit = useCallback(async (e) => {
     e.preventDefault()
     if (!question.trim()) {
       setError("Please enter a question")
@@ -373,7 +439,7 @@ const AiTutor = () => {
     } finally {
       setIsProcessing(false)
     }
-  }
+  }, [question])
 
   // Toggle between chat and voice modes
   const toggleInputMode = () => {
@@ -457,46 +523,119 @@ const AiTutor = () => {
   )
 
   return (
-    <div className="ai-tutor-container">
-      {!renderError && <div ref={containerRef} style={{ position: "absolute", top: 0, left: 0 }} />}
-      {renderError && renderFallbackContent()}
-
-      {/* Title at the top */}
-      <div
-        style={{
-          position: "absolute",
-          top: "30px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          textAlign: "center",
-          zIndex: 10,
-        }}
-      >
-        <h1
-          style={{
-            color: "#00a2ff",
-            fontSize: "2.5rem",
-            fontWeight: "bold",
-            textShadow: "0 0 15px rgba(0, 162, 255, 0.7), 0 0 30px rgba(0, 162, 255, 0.5)",
-            margin: 0,
-            padding: 0,
-            letterSpacing: "2px",
-            fontFamily: "Arial, sans-serif",
-          }}
-        >
-          QUANTUM INTELLECT
+    <div className="ai-tutor-container" style={{ 
+      width: '100vw', 
+      height: '100vh', 
+      position: 'relative',
+      overflow: 'hidden',
+      background: 'linear-gradient(to bottom, #000510, #002040)'
+    }}>
+      {/* Three.js container */}
+      <div ref={containerRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} />
+      
+      {/* Title and Subtitle */}
+      <div style={{
+        position: 'absolute',
+        top: '5%',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        textAlign: 'center',
+        color: '#fff',
+        zIndex: 10
+      }}>
+        <h1 style={{
+          fontSize: '3.5rem',
+          fontWeight: 'bold',
+          margin: 0,
+          background: 'linear-gradient(45deg, #00a2ff, #00ffff)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          textShadow: '0 0 20px rgba(0, 162, 255, 0.3)',
+          fontFamily: '"Segoe UI", Arial, sans-serif'
+        }}>
+          Quantum Intellect
         </h1>
-        <p
+        <h2 style={{
+          fontSize: '1.5rem',
+          fontWeight: 'normal',
+          margin: '0.5rem 0 0 0',
+          color: 'rgba(255, 255, 255, 0.8)',
+          textShadow: '0 0 10px rgba(0, 162, 255, 0.2)',
+          fontFamily: '"Segoe UI", Arial, sans-serif'
+        }}>
+          Your advanced AI learning companion
+        </h2>
+      </div>
+
+      {/* Browse Problems Button */}
+      <div style={{
+        position: 'absolute',
+        top: '25%',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 10,
+        width: '80%',
+        maxWidth: '600px',
+      }}>
+        <button
+          onClick={() => setShowBrowseProblems(!showBrowseProblems)}
           style={{
-            color: "rgba(255, 255, 255, 0.8)",
-            fontSize: "1.2rem",
-            margin: "10px 0 0 0",
-            textShadow: "0 0 10px rgba(0, 162, 255, 0.5)",
-            fontFamily: "Arial, sans-serif",
+            width: '100%',
+            padding: '12px',
+            background: 'linear-gradient(135deg, rgba(0, 162, 255, 0.3) 0%, rgba(0, 119, 204, 0.3) 100%)',
+            border: '1px solid rgba(0, 162, 255, 0.5)',
+            borderRadius: '8px',
+            color: 'white',
+            fontSize: '1rem',
+            cursor: 'pointer',
+            backdropFilter: 'blur(10px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '10px'
           }}
         >
-          Your Advanced AI Learning Companion
-        </p>
+          <span style={{ fontSize: '1.2em' }}>{showBrowseProblems ? '▼' : '▶'}</span>
+          Browse Problems from Knowledge Map
+        </button>
+
+        {/* Problems List */}
+        {showBrowseProblems && (
+          <div style={{
+            marginTop: '10px',
+            background: 'rgba(0, 8, 20, 0.7)',
+            border: '1px solid rgba(0, 162, 255, 0.5)',
+            borderRadius: '8px',
+            padding: '15px',
+            maxHeight: '300px',
+            overflowY: 'auto',
+            backdropFilter: 'blur(10px)',
+          }}>
+            {availableProblems.map((problem, index) => (
+              <div
+                key={problem.id}
+                onClick={() => {
+                  setQuestion(problem.text);
+                  setShowBrowseProblems(false);
+                }}
+                style={{
+                  padding: '12px',
+                  borderBottom: index < availableProblems.length - 1 ? '1px solid rgba(0, 162, 255, 0.2)' : 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  ':hover': {
+                    background: 'rgba(0, 162, 255, 0.1)'
+                  }
+                }}
+              >
+                <div style={{ color: '#00a2ff', marginBottom: '4px', fontSize: '0.9rem' }}>
+                  {problem.section} → {problem.node}
+                </div>
+                <div style={{ color: 'white' }}>{problem.text}</div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Chat/Voice Toggle */}
@@ -613,6 +752,7 @@ const AiTutor = () => {
         {inputMode === "chat" ? (
           <div style={{ display: "flex", gap: "10px" }}>
             <input
+              id="ai-tutor-input"
               type="text"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
@@ -629,6 +769,7 @@ const AiTutor = () => {
               }}
             />
             <button
+              id="ai-tutor-submit-button"
               type="submit"
               disabled={isProcessing}
               style={{
@@ -691,8 +832,10 @@ const AiTutor = () => {
           </div>
         )}
       </form>
+
+      {renderError && renderFallbackContent()}
     </div>
   )
 }
 
-export default AiTutor 
+export default AiTutor

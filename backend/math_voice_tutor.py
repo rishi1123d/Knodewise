@@ -59,23 +59,22 @@ class MathVoiceTutor:
                 self.engine = None
         
         # Initialize OpenAI
-        openai.api_key = os.getenv('OPENAI_API_KEY')
-        if not openai.api_key:
+        self.client = openai.OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+        if not os.getenv('OPENAI_API_KEY'):
             raise ValueError("OpenAI API key not found. Please set it in the .env file.")
         
         # System prompt for math tutoring with personality
-        self.system_prompt = """You are a cool and engaging math tutor with a personality similar to Tony Stark or a friendly robot from a sci-fi movie. 
-        Your responses should:
-        1. Break down complex problems into simple steps
-        2. Use clear, conversational language with a touch of humor
-        3. Explain the reasoning behind each step
-        4. Include relevant formulas and concepts
-        5. End with a practice question for the student
-        6. Use engaging phrases like "Check this out!", "Here's the cool part...", "Let's break this down!"
-        7. Add personality with phrases like "Piece of cake!", "Math is awesome!", "Let's make this problem our friend!"
+        self.system_prompt = """You are a math tutor focused on providing clear, step-by-step solutions.
+        For each question:
+        1. State the key concept or formula needed
+        2. Break down the solution into numbered steps
+        3. Show all calculations clearly
+        4. Explain each step briefly but clearly
+        5. State the final answer
         
-        Focus only on mathematics topics. If asked about non-math topics, politely redirect to math questions.
-        Keep your responses concise and clear for text-to-speech, but make them engaging and fun!"""
+        Keep responses concise and focused on solving the problem.
+        If the question is unclear, ask for clarification.
+        If the question is not about math, politely redirect to math topics."""
     
     def speak_response(self, text):
         """Convert text response to speech with personality"""
@@ -123,7 +122,7 @@ class MathVoiceTutor:
     def get_math_explanation(self, question):
         """Get step-by-step math explanation from GPT"""
         try:
-            response = openai.ChatCompletion.create(
+            response = self.client.chat.completions.create(
                 model="gpt-4",
                 messages=[
                     {"role": "system", "content": self.system_prompt},

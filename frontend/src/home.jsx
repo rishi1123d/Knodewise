@@ -6,7 +6,7 @@ const HomeScreen = () => {
   const navigate = useNavigate();
 
   const handleStudentLogin = () => {
-    navigate('/student/knowledge-map');
+    navigate('/student/grades');
   };
 
   const handleTeacherLogin = () => {
