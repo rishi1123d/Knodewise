@@ -6,12 +6,23 @@ import os
 import pyttsx3
 import time
 import subprocess
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+
+# Debug environment variables
+logger.info("Checking environment variables...")
+logger.info(f"Current working directory: {os.getcwd()}")
+logger.info(f"OPENAI_API_KEY present: {'Yes' if os.getenv('OPENAI_API_KEY') else 'No'}")
+if os.getenv('OPENAI_API_KEY'):
+    logger.info(f"OPENAI_API_KEY length: {len(os.getenv('OPENAI_API_KEY'))}")
 
 # Simple CORS configuration
 CORS(app, supports_credentials=True)
@@ -41,10 +52,17 @@ except Exception as e:
 
 # Initialize the math tutor
 try:
+    logger.info("Starting math tutor initialization...")
+    logger.info(f"OpenAI API Key present: {'Yes' if os.getenv('OPENAI_API_KEY') else 'No'}")
+    if os.getenv('OPENAI_API_KEY'):
+        logger.info(f"API Key length: {len(os.getenv('OPENAI_API_KEY'))}")
     tutor = MathVoiceTutor()
     logger.info("Math tutor initialized successfully")
 except Exception as e:
-    logger.error(f"Failed to initialize math tutor: {e}")
+    logger.error(f"Failed to initialize math tutor: {str(e)}")
+    logger.error(f"Error type: {type(e).__name__}")
+    import traceback
+    logger.error(f"Full traceback: {traceback.format_exc()}")
     tutor = None
 
 def speak_text(text):

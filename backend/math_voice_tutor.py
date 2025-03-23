@@ -59,9 +59,29 @@ class MathVoiceTutor:
                 self.engine = None
         
         # Initialize OpenAI
-        self.client = openai.OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
-        if not os.getenv('OPENAI_API_KEY'):
-            raise ValueError("OpenAI API key not found. Please set it in the .env file.")
+        try:
+            print("Initializing OpenAI client...")
+            api_key = os.getenv('OPENAI_API_KEY')
+            print(f"API key length: {len(api_key) if api_key else 0}")
+            if not api_key:
+                raise ValueError("OpenAI API key not found in environment variables")
+            print("API key found, creating OpenAI client...")
+            self.client = openai.OpenAI(api_key=api_key)
+            # Test the client with a simple request
+            print("Testing OpenAI client with a simple request...")
+            test_response = self.client.chat.completions.create(
+                model="gpt-4",
+                messages=[{"role": "user", "content": "Hello"}],
+                max_tokens=5
+            )
+            print("OpenAI client test successful!")
+            print("OpenAI client created successfully")
+        except Exception as e:
+            print(f"Error initializing OpenAI client: {str(e)}")
+            print(f"Error type: {type(e).__name__}")
+            import traceback
+            print(f"Full traceback: {traceback.format_exc()}")
+            raise
         
         # System prompt for math tutoring with personality
         self.system_prompt = """You are a math tutor focused on providing clear, step-by-step solutions.
