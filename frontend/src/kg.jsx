@@ -181,7 +181,7 @@ const KnowledgeTree = () => {
       
       {/* Add this AI Tutor button */}
       <button
-        onClick={() => navigate('/ai-tutor')}
+        onClick={() => navigate('/student/ai-tutor')}
         style={{
           position: 'fixed',
           bottom: '20px',
