@@ -1,7 +1,10 @@
 import React from 'react';
 import './kg.css';
+import { useNavigate } from 'react-router-dom';
 
 const KnowledgeTree = () => {
+  const navigate = useNavigate();
+  
   return (
     <div className="knowledge-tree-container">
       {/* Root Node - AP Calculus BC */}
@@ -175,6 +178,28 @@ const KnowledgeTree = () => {
           </div>
         </div>
       </div>
+      
+      {/* Add this AI Tutor button */}
+      <button
+        onClick={() => navigate('/ai-tutor')}
+        style={{
+          position: 'fixed',
+          bottom: '20px',
+          left: '20px',
+          padding: '12px 24px',
+          backgroundColor: '#239434',
+          color: 'white',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          fontFamily: 'Arial, sans-serif',
+          fontSize: '16px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+          zIndex: 1000
+        }}
+      >
+        Help with AI
+      </button>
     </div>
   );
 };

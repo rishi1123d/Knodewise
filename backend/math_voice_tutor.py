@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 import time
 import random
+import subprocess
 
 # Load environment variables
 load_dotenv()
@@ -90,7 +91,14 @@ class MathVoiceTutor:
                         self.engine.runAndWait()
                         time.sleep(0.5)  # Small pause between sentences
             else:
-                print("Text-to-speech is not available. Here's the text response:")
+                print("Using system text-to-speech...")
+                # Use system's say command as fallback
+                sentences = text.split('.')
+                for sentence in sentences:
+                    if sentence.strip():
+                        print(f"Saying: {sentence.strip()}")
+                        subprocess.run(['say', sentence.strip() + '.'])
+                        time.sleep(0.5)
             print(text)
         except Exception as e:
             print(f"Error in text-to-speech: {e}")
