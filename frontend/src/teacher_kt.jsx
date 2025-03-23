@@ -46,8 +46,8 @@ const MultivariableCalculusTree = () => {
       const rootNode = {
         id: 'root',
         type: 'root',
-        name: 'Math 250: Multivariable Calculus',
-        x: 150,
+        name: 'Math 250:\nMultivariable Calculus', // Added line break for better display
+        x: 120, // Moved left from 150 to 120
         y: 300,
         children: ['section-a', 'section-b', 'section-c', 'section-d'],
         expanded: false,
@@ -62,7 +62,7 @@ const MultivariableCalculusTree = () => {
         id: 'section-a',
         type: 'directory',
         name: 'A. Vectors and Parameterization',
-        x: 400,
+        x: 350, // Moved from 400 to 350
         y: 100,
         parentId: 'root',
         children: ['topic-a1', 'topic-a2', 'topic-a3', 'topic-a4', 'topic-a5'],
@@ -77,7 +77,7 @@ const MultivariableCalculusTree = () => {
         id: 'section-b',
         type: 'directory',
         name: 'B. Differentiation',
-        x: 400,
+        x: 350, // Moved from 400 to 350
         y: 350,
         parentId: 'root',
         children: ['topic-b1', 'topic-b2', 'topic-b3', 'topic-b4'],
@@ -92,7 +92,7 @@ const MultivariableCalculusTree = () => {
         id: 'section-c',
         type: 'directory',
         name: 'C. Multiple Integrals',
-        x: 400,
+        x: 350, // Moved from 400 to 350
         y: 550,
         parentId: 'root',
         children: [],
@@ -108,7 +108,7 @@ const MultivariableCalculusTree = () => {
         id: 'section-d',
         type: 'directory',
         name: 'D. Vector Calculus',
-        x: 400,
+        x: 350, // Moved from 400 to 350
         y: 650,
         parentId: 'root',
         children: [],
@@ -125,7 +125,7 @@ const MultivariableCalculusTree = () => {
         id: 'topic-a1',
         type: 'leaf',
         name: 'A.1 Multivariable Functions',
-        x: 700,
+        x: 580, // Moved from 700 to 580
         y: 50, // Adjusted positioning
         parentId: 'section-a',
         children: [],
@@ -133,11 +133,9 @@ const MultivariableCalculusTree = () => {
         questions: [
           { id: 'q-a1-1', text: 'What is the domain of f(x,y) = ln(1-x²-y²)?', correct: true },
           { id: 'q-a1-2', text: 'Define a multivariable function and give an example.', correct: true },
-          { id: 'q-a1-3', text: 'What is the range of f(x,y) = x² + y²?', correct: true },
-          { id: 'q-a1-4', text: 'When is a multivariable function considered bounded?', correct: false },
-          { id: 'q-a1-5', text: 'Sketch the surface z = xy', correct: false }
+          { id: 'q-a1-3', text: 'What is the range of f(x,y) = x² + y²?', correct: true }
         ],
-        progress: { correct: 3, total: 5 },
+        progress: { correct: 3, total: 3 },
         hasChildren: true
       };
       initialNodes.push(topicA1);
@@ -146,7 +144,7 @@ const MultivariableCalculusTree = () => {
         id: 'topic-a2',
         type: 'leaf',
         name: 'A.2 Vector Algebra and Matrices',
-        x: 700,
+        x: 580, // Moved from 700 to 580
         y: 110, // Adjusted positioning
         parentId: 'section-a',
         children: [],
@@ -167,7 +165,7 @@ const MultivariableCalculusTree = () => {
         id: 'topic-a3',
         type: 'leaf',
         name: 'A.3 Dot Product and Cross Product',
-        x: 700,
+        x: 580, // Moved from 700 to 580
         y: 170, // Adjusted positioning
         parentId: 'section-a',
         children: [],
@@ -176,10 +174,9 @@ const MultivariableCalculusTree = () => {
           { id: 'q-a3-1', text: 'Find the angle between vectors [1,2,3] and [4,5,6]', correct: false },
           { id: 'q-a3-2', text: 'Calculate the cross product of [1,0,0] and [0,1,0]', correct: false },
           { id: 'q-a3-3', text: 'When are two vectors perpendicular?', correct: false },
-          { id: 'q-a3-4', text: 'What is the geometric interpretation of the cross product?', correct: false },
-          { id: 'q-a3-5', text: 'Explain the algebraic properties of the dot product', correct: false }
+          { id: 'q-a3-4', text: 'What is the geometric interpretation of the cross product?', correct: false }
         ],
-        progress: { correct: 0, total: 5 },
+        progress: { correct: 0, total: 4 },
         hasChildren: true
       };
       initialNodes.push(topicA3);
@@ -188,19 +185,16 @@ const MultivariableCalculusTree = () => {
         id: 'topic-a4',
         type: 'leaf',
         name: 'A.4 Parameterized Curves',
-        x: 700,
+        x: 580, // Moved from 700 to 580
         y: 230, // Adjusted positioning
         parentId: 'section-a',
         children: [],
         expanded: false,
         questions: [
           { id: 'q-a4-1', text: 'Parameterize a circle of radius 5 centered at the origin', correct: false },
-          { id: 'q-a4-2', text: 'Find the parameterization of the line through (1,2,3) and (4,5,6)', correct: false },
-          { id: 'q-a4-3', text: 'What is a helix and how is it parameterized?', correct: false },
-          { id: 'q-a4-4', text: 'Convert the equation x²+y²=1 to a parametric form', correct: false },
-          { id: 'q-a4-5', text: 'Determine if a given curve is smooth or not', correct: false }
+          { id: 'q-a4-2', text: 'Find the parameterization of the line through (1,2,3) and (4,5,6)', correct: false }
         ],
-        progress: { correct: 0, total: 5 },
+        progress: { correct: 0, total: 2 },
         hasChildren: true
       };
       initialNodes.push(topicA4);
@@ -209,7 +203,7 @@ const MultivariableCalculusTree = () => {
         id: 'topic-a5',
         type: 'leaf',
         name: 'A.5 Derivatives and Arc Length',
-        x: 700,
+        x: 580, // Moved from 700 to 580
         y: 290, // Adjusted positioning
         parentId: 'section-a',
         children: [],
@@ -217,11 +211,9 @@ const MultivariableCalculusTree = () => {
         questions: [
           { id: 'q-a5-1', text: 'Find the derivative of r(t) = (t², t³, t⁴) at t=1', correct: false },
           { id: 'q-a5-2', text: 'Calculate the arc length of r(t) = (t, t², t³) for t ∈ [0,1]', correct: false },
-          { id: 'q-a5-3', text: 'What is the unit tangent vector?', correct: false },
-          { id: 'q-a5-4', text: 'Define the curvature of a curve and explain its significance', correct: false },
-          { id: 'q-a5-5', text: 'Find the TNB frame for a given curve', correct: false }
+          { id: 'q-a5-3', text: 'What is the unit tangent vector?', correct: false }
         ],
-        progress: { correct: 0, total: 5 },
+        progress: { correct: 0, total: 3 },
         hasChildren: true
       };
       initialNodes.push(topicA5);
@@ -231,7 +223,7 @@ const MultivariableCalculusTree = () => {
         id: 'topic-b1',
         type: 'leaf',
         name: 'B.1 Graphs and Level Sets',
-        x: 700,
+        x: 580, // Moved from 700 to 580
         y: 350, // Adjusted positioning
         parentId: 'section-b',
         children: [],
@@ -241,9 +233,10 @@ const MultivariableCalculusTree = () => {
           { id: 'q-b1-2', text: 'What is the level set of f(x,y,z) = x + y + z at level 5?', correct: false },
           { id: 'q-b1-3', text: 'Describe the level curves of f(x,y) = x - y', correct: false },
           { id: 'q-b1-4', text: 'Identify the shape of level curves for f(x,y) = x² - y²', correct: false },
-          { id: 'q-b1-5', text: 'How do you use level sets to visualize multivariable functions?', correct: false }
+          { id: 'q-b1-5', text: 'How do you use level sets to visualize multivariable functions?', correct: false },
+          { id: 'q-b1-6', text: 'What does it mean when level curves are close together?', correct: false }
         ],
-        progress: { correct: 0, total: 5 },
+        progress: { correct: 0, total: 6 },
         hasChildren: true
       };
       initialNodes.push(topicB1);
@@ -252,7 +245,7 @@ const MultivariableCalculusTree = () => {
         id: 'topic-b2',
         type: 'leaf',
         name: 'B.2 Equations of Lines and Planes',
-        x: 700,
+        x: 580, // Moved from 700 to 580
         y: 410, // Adjusted positioning
         parentId: 'section-b',
         children: [],
@@ -260,11 +253,9 @@ const MultivariableCalculusTree = () => {
         questions: [
           { id: 'q-b2-1', text: 'Find the equation of a plane through (1,2,3) with normal vector [1,1,1]', correct: false },
           { id: 'q-b2-2', text: 'What is the vector equation of a line?', correct: false },
-          { id: 'q-b2-3', text: 'Find the distance from point (2,3,4) to the plane x + y + z = 1', correct: false },
-          { id: 'q-b2-4', text: 'Find the line of intersection of two planes 2x+y-z=5 and x-y+2z=3', correct: false },
-          { id: 'q-b2-5', text: 'How many dimensions does the intersection of two planes have?', correct: false }
+          { id: 'q-b2-3', text: 'Find the distance from point (2,3,4) to the plane x + y + z = 1', correct: false }
         ],
-        progress: { correct: 0, total: 5 },
+        progress: { correct: 0, total: 3 },
         hasChildren: true
       };
       initialNodes.push(topicB2);
@@ -273,7 +264,7 @@ const MultivariableCalculusTree = () => {
         id: 'topic-b3',
         type: 'leaf',
         name: 'B.3 Continuity and Limits',
-        x: 700,
+        x: 580, // Moved from 700 to 580
         y: 470, // Adjusted positioning
         parentId: 'section-b',
         children: [],
@@ -289,7 +280,7 @@ const MultivariableCalculusTree = () => {
         id: 'topic-b4',
         type: 'leaf',
         name: 'B.4 Partial Derivatives and Linearization',
-        x: 700,
+        x: 580, // Moved from 700 to 580
         y: 530, // Adjusted positioning
         parentId: 'section-b',
         children: [],
@@ -800,14 +791,14 @@ const MultivariableCalculusTree = () => {
     let nodeWidth, nodeHeight;
     
     if (node.type === 'root') {
-      nodeWidth = 220;
-      nodeHeight = 120; // Increased height for root node
+      nodeWidth = 280; // Adjusted from 320 to 280
+      nodeHeight = 140;
     } else if (node.type === 'directory') {
       nodeWidth = 180;
-      nodeHeight = 100; // Increased height for directory nodes
+      nodeHeight = 100;
     } else { // leaf
-      nodeWidth = 220;  // Wider leaf nodes
-      nodeHeight = 60;  // Taller leaf nodes
+      nodeWidth = 220;
+      nodeHeight = 60;
     }
     
     const radius = 10;
@@ -831,7 +822,7 @@ const MultivariableCalculusTree = () => {
       overflow: 'hidden',
       zIndex: 10,
       transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-      fontSize: node.type === 'root' ? '16px' : (node.type === 'directory' ? '14px' : '12px'),
+      fontSize: node.type === 'root' ? '18px' : (node.type === 'directory' ? '14px' : '12px'),
       opacity: 1, // All nodes have the same opacity now
       padding: '5px'
     };
@@ -851,12 +842,19 @@ const MultivariableCalculusTree = () => {
 
     // If the node is expanded, adjust the height to show questions
     if (node.expanded && node.type === 'leaf') {
-      const expandedHeight = nodeHeight + (node.questions.length * 35) + 40; // Extra space for add button
+      // Calculate expanded height based on number of questions
+      // Extra padding to ensure nothing gets cut off
+      const questionsPadding = 80; // Increased padding for more space
+      const expandedHeight = nodeHeight + (node.questions.length * 45) + questionsPadding;
+      
       nodeStyle.height = `${expandedHeight}px`;
+      // Shift the node up to ensure the expanded content is properly positioned
       nodeStyle.top = `${node.y - expandedHeight / 2}px`;
       nodeStyle.zIndex = 20;
-      nodeStyle.width = '280px'; // Make expanded leaf nodes wider
-      nodeStyle.left = `${node.x - 140}px`; // Center the expanded node
+      nodeStyle.width = '350px'; // Increased width from 280px to 350px
+      nodeStyle.left = `${node.x - 175}px`; // Center the expanded node
+      nodeStyle.maxHeight = '500px'; // Set a maximum height
+      nodeStyle.overflowY = 'auto'; // Add vertical scrolling if needed
     }
     
     if (node.id === draggedNode) {
@@ -875,14 +873,15 @@ const MultivariableCalculusTree = () => {
         <div 
           style={{ 
             fontWeight: 'inherit', 
-            marginBottom: '3px',
+            marginBottom: '5px',
             padding: '0 5px',
             textAlign: 'center',
-            fontSize: node.type === 'root' ? '16px' : (node.type === 'directory' ? '14px' : '13px'),
+            fontSize: node.type === 'root' ? '20px' : (node.type === 'directory' ? '14px' : '13px'), // Increased root font size
             width: '95%',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            whiteSpace: node.type === 'leaf' ? 'normal' : 'nowrap',
+            whiteSpace: node.type === 'root' ? 'pre-line' : (node.type === 'leaf' ? 'normal' : 'nowrap'),
+            lineHeight: node.type === 'root' ? '1.3' : 'inherit',
           }}
         >
           {node.name}
@@ -963,15 +962,17 @@ const MultivariableCalculusTree = () => {
         {/* Expanded Leaf Node Questions */}
         {node.expanded && node.type === 'leaf' && (
           <div style={{ 
-            marginTop: '10px', 
-            width: '100%', 
+            marginTop: '15px', // Increased top margin for better spacing 
+            width: '95%',
             padding: '0 10px',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center'
+            alignItems: 'center',
+            maxHeight: '420px', // Max height for scrolling
+            overflowY: 'auto',  // Add vertical scrolling
           }}>
             {node.questions.length === 0 ? (
-              <div style={{ fontStyle: 'italic', color: '#999', fontSize: '11px', marginBottom: '10px' }}>
+              <div style={{ fontStyle: 'italic', color: '#999', fontSize: '11px', marginBottom: '12px' }}>
                 No questions added
               </div>
             ) : (
@@ -980,16 +981,16 @@ const MultivariableCalculusTree = () => {
                   display: 'flex', 
                   alignItems: 'center', 
                   width: '100%',
-                  marginBottom: '5px',
-                  padding: '5px',
+                  marginBottom: '10px', // Increased margin between questions
+                  padding: '8px',
                   backgroundColor: 'rgba(255,255,255,0.5)',
                   borderRadius: '5px',
-                  fontSize: '11px'
+                  fontSize: '12px'
                 }}>
-                  <div style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <div style={{ flex: 1, overflow: 'visible', padding: '0 5px' }}>
                     {q.text}
                   </div>
-                  <div style={{ display: 'flex', gap: '4px' }}>
+                  <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
                     <button 
                       onClick={(e) => {
                         e.stopPropagation();
@@ -1044,13 +1045,14 @@ const MultivariableCalculusTree = () => {
                 addQuestion(e, node.id);
               }}
               style={{
-                marginTop: '8px',
+                marginTop: '12px', // Increased margin for better spacing
+                marginBottom: '15px', // Added bottom margin 
                 backgroundColor: '#2a9d8f',
                 color: 'white',
                 border: 'none',
                 borderRadius: '4px',
-                padding: '3px 8px',
-                fontSize: '11px',
+                padding: '5px 10px',
+                fontSize: '12px',
                 cursor: 'pointer'
               }}
             >

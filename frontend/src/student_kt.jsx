@@ -6,19 +6,23 @@ const MultivariableCalculusTreeStudent = () => {
   const [selectedNode, setSelectedNode] = useState(null);
   const [draggedNode, setDraggedNode] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [nodeMoved, setNodeMoved] = useState(false);
   const svgRef = useRef(null);
   const treeContainerRef = useRef(null);
 
   // Create the initial tree structure with Multivariable Calculus data
   useEffect(() => {
     if (nodes.length === 0) {
+      // Initialize with the same data as before...
+      // This part remains unchanged
       const initialNodes = [];
 
       // Root node (leftmost)
       const rootNode = {
         id: 'root',
         type: 'root',
-        name: 'Math 211 - Multivariable Calculus',
+        name: 'Math 250: Multivariable Calculus',
         x: 150,
         y: 300,
         children: ['section-a', 'section-b', 'section-c', 'section-d'],
@@ -289,14 +293,14 @@ const MultivariableCalculusTreeStudent = () => {
   }, [nodes]);
 
   // Toggle node expansion
-  const toggleNodeExpansion = (nodeId) => {
+  const toggleNodeExpansion = useCallback((nodeId) => {
     setNodes(prevNodes => 
       prevNodes.map(node => 
         node.id === nodeId ? { ...node, expanded: !node.expanded } : node
       )
     );
     setSelectedNode(nodeId);
-  };
+  }, []);
 
   // Calculate the percentage for progress display
   const calculatePercentage = (correct, total) => {
@@ -378,8 +382,8 @@ const MultivariableCalculusTreeStudent = () => {
     });
   };
 
-  // Handle node dragging - all nodes can be dragged
-  const startDrag = (e, nodeId) => {
+  // Handle node dragging - improved to better distinguish between clicks and drags
+  const handleMouseDown = useCallback((e, nodeId) => {
     // Don't start dragging if clicked on a button or input
     if (
       e.target.tagName.toLowerCase() === 'button' ||
@@ -394,51 +398,80 @@ const MultivariableCalculusTreeStudent = () => {
     if (!node) return;
 
     const containerRect = treeContainerRef.current.getBoundingClientRect();
-    const offsetX = e.clientX - containerRect.left - node.x;
-    const offsetY = e.clientY - containerRect.top - node.y;
+    const clientX = e.clientX - containerRect.left;
+    const clientY = e.clientY - containerRect.top;
     
+    setDragStart({ x: clientX, y: clientY });
     setDraggedNode(nodeId);
-    setDragOffset({ x: offsetX, y: offsetY });
+    setDragOffset({ 
+      x: clientX - node.x, 
+      y: clientY - node.y 
+    });
+    setNodeMoved(false);
     
     e.preventDefault();
     e.stopPropagation();
-  };
+  }, [nodes]);
 
-  const handleDrag = (e) => {
+  const handleMouseMove = useCallback((e) => {
     if (!draggedNode) return;
 
     const containerRect = treeContainerRef.current.getBoundingClientRect();
-    const x = e.clientX - containerRect.left - dragOffset.x;
-    const y = e.clientY - containerRect.top - dragOffset.y;
-
+    const clientX = e.clientX - containerRect.left;
+    const clientY = e.clientY - containerRect.top;
+    
+    // Calculate distance moved
+    const dx = clientX - dragStart.x;
+    const dy = clientY - dragStart.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    
+    // Set nodeMoved if moved more than 5 pixels
+    if (distance > 5) {
+      setNodeMoved(true);
+    }
+    
+    // Update node position
     setNodes(prevNodes => 
       prevNodes.map(node => 
-        node.id === draggedNode ? { ...node, x, y } : node
+        node.id === draggedNode ? { 
+          ...node, 
+          x: clientX - dragOffset.x, 
+          y: clientY - dragOffset.y 
+        } : node
       )
     );
     
     e.preventDefault();
     e.stopPropagation();
-  };
+  }, [draggedNode, dragOffset, dragStart]);
 
-  const endDrag = (e) => {
-    if (draggedNode) {
-      e.preventDefault();
-      e.stopPropagation();
+  const handleMouseUp = useCallback((e) => {
+    if (!draggedNode) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // If the node wasn't moved significantly, treat it as a click
+    if (!nodeMoved) {
+      toggleNodeExpansion(draggedNode);
     }
+    
+    // Reset drag state
     setDraggedNode(null);
-  };
+    setNodeMoved(false);
+  }, [draggedNode, nodeMoved, toggleNodeExpansion]);
 
+  // Set up event listeners
   useEffect(() => {
     if (draggedNode) {
-      document.addEventListener('mousemove', handleDrag);
-      document.addEventListener('mouseup', endDrag);
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
       return () => {
-        document.removeEventListener('mousemove', handleDrag);
-        document.removeEventListener('mouseup', endDrag);
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [draggedNode]);
+  }, [draggedNode, handleMouseMove, handleMouseUp]);
 
   // Get node style based on its type and state
   const getNodeStyle = (node) => {
@@ -447,10 +480,10 @@ const MultivariableCalculusTreeStudent = () => {
     
     if (node.type === 'root') {
       nodeWidth = 220;
-      nodeHeight = 90;
+      nodeHeight = 120; // Increased from 90
     } else if (node.type === 'directory') {
       nodeWidth = 180;
-      nodeHeight = 70;
+      nodeHeight = 100; // Increased from 70
     } else { // leaf
       nodeWidth = 220;  // Wider leaf nodes
       nodeHeight = 60;  // Taller leaf nodes - increased from 50
@@ -472,13 +505,13 @@ const MultivariableCalculusTreeStudent = () => {
       alignItems: 'center',
       backgroundColor: '#e9ecef',
       border: `2px solid ${node.locked ? '#aaaaaa' : '#2a9d8f'}`,
-      cursor: 'pointer', // All nodes are draggable now
+      cursor: 'pointer',
       boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
       overflow: 'hidden',
       zIndex: 10,
       transition: 'transform 0.2s ease, box-shadow 0.2s ease',
       fontSize: node.type === 'root' ? '16px' : (node.type === 'directory' ? '14px' : '12px'),
-      opacity: 1, // All nodes have the same opacity now
+      opacity: 1,
       padding: '5px'
     };
 
@@ -668,8 +701,7 @@ const MultivariableCalculusTreeStudent = () => {
             const baseNodeProps = {
               key: node.id,
               style: getNodeStyle(node),
-              onClick: () => toggleNodeExpansion(node.id),
-              onMouseDown: (e) => startDrag(e, node.id),
+              onMouseDown: (e) => handleMouseDown(e, node.id),
               className: `knowledge-node ${node.type} ${node.expanded ? 'expanded' : ''} ${node.locked ? 'locked' : ''} ${draggedNode === node.id ? 'dragging' : ''}`
             };
             
@@ -698,31 +730,6 @@ const MultivariableCalculusTreeStudent = () => {
         <p style={{ fontSize: '12px', margin: '2px 0' }}>• Click on leaf nodes to expand and see questions</p>
         <p style={{ fontSize: '12px', margin: '2px 0' }}>• Mark questions ✓ or ✗ to update your progress</p>
       </div>
-      
-      <style jsx>{`
-        .knowledge-tree-container {
-          scroll-behavior: smooth;
-        }
-        
-        .knowledge-node {
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        
-        .knowledge-node:hover {
-          transform: scale(1.05);
-          box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-          z-index: 30;
-        }
-        
-        .knowledge-node.locked {
-          cursor: pointer; /* Changed from not-allowed to allow movement */
-        }
-        
-        .knowledge-node.dragging {
-          cursor: grabbing !important;
-          transform: scale(1.05);
-        }
-      `}</style>
     </div>
   );
 };
