@@ -42,27 +42,27 @@ const MultivariableCalculusTree = () => {
     if (nodes.length === 0) {
       const initialNodes = [];
 
-      // Root node (leftmost)
+      // Root node (leftmost) - moved further left
       const rootNode = {
         id: 'root',
         type: 'root',
-        name: 'Math 250:\nMultivariable Calculus', // Added line break for better display
-        x: 120, // Moved left from 150 to 120
+        name: 'Math 250:\nMultivariable Calculus',
+        x: 80, // Moved further left from 120 to 80
         y: 300,
         children: ['section-a', 'section-b', 'section-c', 'section-d'],
         expanded: false,
         questions: [],
-        progress: { correct: 5, total: 50 }, // Representing approx 1/4 completion
+        progress: { correct: 5, total: 50 },
         hasChildren: true
       };
       initialNodes.push(rootNode);
 
-      // Main sections (middle column)
+      // Main sections (middle column) - adjusted position
       const sectionA = {
         id: 'section-a',
         type: 'directory',
         name: 'A. Vectors and Parameterization',
-        x: 350, // Moved from 400 to 350
+        x: 300, // Moved from 350 to 300 (centered between root and leaf)
         y: 100,
         parentId: 'root',
         children: ['topic-a1', 'topic-a2', 'topic-a3', 'topic-a4', 'topic-a5'],
@@ -77,7 +77,7 @@ const MultivariableCalculusTree = () => {
         id: 'section-b',
         type: 'directory',
         name: 'B. Differentiation',
-        x: 350, // Moved from 400 to 350
+        x: 300, // Moved from 350 to 300
         y: 350,
         parentId: 'root',
         children: ['topic-b1', 'topic-b2', 'topic-b3', 'topic-b4'],
@@ -92,7 +92,7 @@ const MultivariableCalculusTree = () => {
         id: 'section-c',
         type: 'directory',
         name: 'C. Multiple Integrals',
-        x: 350, // Moved from 400 to 350
+        x: 300, // Moved from 350 to 300
         y: 550,
         parentId: 'root',
         children: [],
@@ -108,7 +108,7 @@ const MultivariableCalculusTree = () => {
         id: 'section-d',
         type: 'directory',
         name: 'D. Vector Calculus',
-        x: 350, // Moved from 400 to 350
+        x: 300, // Moved from 350 to 300
         y: 650,
         parentId: 'root',
         children: [],
@@ -120,13 +120,13 @@ const MultivariableCalculusTree = () => {
       };
       initialNodes.push(sectionD);
 
-      // Topics for Section A with comprehensive examples
+      // Topics for Section A - moved further right
       const topicA1 = {
         id: 'topic-a1',
         type: 'leaf',
         name: 'A.1 Multivariable Functions',
-        x: 580, // Moved from 700 to 580
-        y: 50, // Adjusted positioning
+        x: 600, // Moved from 580 to 600
+        y: 50,
         parentId: 'section-a',
         children: [],
         expanded: false,
@@ -144,8 +144,8 @@ const MultivariableCalculusTree = () => {
         id: 'topic-a2',
         type: 'leaf',
         name: 'A.2 Vector Algebra and Matrices',
-        x: 580, // Moved from 700 to 580
-        y: 110, // Adjusted positioning
+        x: 600, // Moved from 580 to 600
+        y: 110,
         parentId: 'section-a',
         children: [],
         expanded: false,
@@ -165,8 +165,8 @@ const MultivariableCalculusTree = () => {
         id: 'topic-a3',
         type: 'leaf',
         name: 'A.3 Dot Product and Cross Product',
-        x: 580, // Moved from 700 to 580
-        y: 170, // Adjusted positioning
+        x: 600, // Moved from 580 to 600
+        y: 170,
         parentId: 'section-a',
         children: [],
         expanded: false,
@@ -185,8 +185,8 @@ const MultivariableCalculusTree = () => {
         id: 'topic-a4',
         type: 'leaf',
         name: 'A.4 Parameterized Curves',
-        x: 580, // Moved from 700 to 580
-        y: 230, // Adjusted positioning
+        x: 600, // Moved from 580 to 600
+        y: 230,
         parentId: 'section-a',
         children: [],
         expanded: false,
@@ -203,8 +203,8 @@ const MultivariableCalculusTree = () => {
         id: 'topic-a5',
         type: 'leaf',
         name: 'A.5 Derivatives and Arc Length',
-        x: 580, // Moved from 700 to 580
-        y: 290, // Adjusted positioning
+        x: 600, // Moved from 580 to 600
+        y: 290,
         parentId: 'section-a',
         children: [],
         expanded: false,
@@ -218,13 +218,13 @@ const MultivariableCalculusTree = () => {
       };
       initialNodes.push(topicA5);
 
-      // Topics for Section B with comprehensive examples
+      // Topics for Section B
       const topicB1 = {
         id: 'topic-b1',
         type: 'leaf',
         name: 'B.1 Graphs and Level Sets',
-        x: 580, // Moved from 700 to 580
-        y: 350, // Adjusted positioning
+        x: 600, // Moved from 580 to 600
+        y: 350,
         parentId: 'section-b',
         children: [],
         expanded: false,
@@ -245,8 +245,8 @@ const MultivariableCalculusTree = () => {
         id: 'topic-b2',
         type: 'leaf',
         name: 'B.2 Equations of Lines and Planes',
-        x: 580, // Moved from 700 to 580
-        y: 410, // Adjusted positioning
+        x: 600, // Moved from 580 to 600
+        y: 410,
         parentId: 'section-b',
         children: [],
         expanded: false,
@@ -264,8 +264,8 @@ const MultivariableCalculusTree = () => {
         id: 'topic-b3',
         type: 'leaf',
         name: 'B.3 Continuity and Limits',
-        x: 580, // Moved from 700 to 580
-        y: 470, // Adjusted positioning
+        x: 600, // Moved from 580 to 600
+        y: 470,
         parentId: 'section-b',
         children: [],
         expanded: false,
@@ -280,8 +280,8 @@ const MultivariableCalculusTree = () => {
         id: 'topic-b4',
         type: 'leaf',
         name: 'B.4 Partial Derivatives and Linearization',
-        x: 580, // Moved from 700 to 580
-        y: 530, // Adjusted positioning
+        x: 600, // Moved from 580 to 600
+        y: 530,
         parentId: 'section-b',
         children: [],
         expanded: false,
@@ -296,49 +296,141 @@ const MultivariableCalculusTree = () => {
     }
   }, [nodes.length]);
 
-  // Mark example questions as correct (60% of questions) - only for unlocked nodes
-  useEffect(() => {
-    // Only run once when component is first mounted and nodes are loaded
-    if (nodes.length > 0) {
-      const leafNodes = nodes.filter(node => node.type === 'leaf' && !node.locked);
-      
-      // Mark 60% of questions as correct for each unlocked leaf node
-      const updatedNodes = [...nodes];
-      
-      leafNodes.forEach(leafNode => {
-        if (leafNode.questions && leafNode.questions.length > 0) {
-          const questionsToMark = Math.ceil(leafNode.questions.length * 0.6);
-          const updatedQuestions = [...leafNode.questions];
-          
-          // Mark the first 60% of questions as correct
-          for (let i = 0; i < questionsToMark; i++) {
-            updatedQuestions[i] = { ...updatedQuestions[i], correct: true };
-          }
-          
-          // Update this node
-          const nodeIndex = updatedNodes.findIndex(n => n.id === leafNode.id);
-          if (nodeIndex !== -1) {
-            updatedNodes[nodeIndex] = {
-              ...updatedNodes[nodeIndex],
-              questions: updatedQuestions,
-              progress: { correct: questionsToMark, total: updatedQuestions.length }
-            };
-          }
-        }
-      });
-      
-      setNodes(updatedNodes);
-      // Update directory node progress after marking questions
-      setTimeout(() => updateParentProgress(), 0);
+  // Function to add a new node - with adjusted spacing between nodes
+  const addNode = (parentId, type) => {
+    const nodeName = prompt(`Enter name for new ${type} node:`);
+    if (!nodeName || nodeName.trim() === '') return;
+
+    const parent = findNodeById(parentId, nodes);
+    if (!parent) return;
+
+    // Calculate position based on parent's position with increased spacing
+    let newX;
+    if (parent.type === 'root') {
+      newX = parent.x + 220; // Bigger gap between root and directory
+    } else if (parent.type === 'directory') {
+      newX = parent.x + 300; // Bigger gap between directory and leaf
+    } else {
+      newX = parent.x + 100; // Default spacing if adding under another type
     }
-  }, [nodes.length]);
+    
+    const childCount = parent.children ? parent.children.length : 0;
+    const newY = parent.y + 70 + (childCount * 30);
 
-  // Helper function to find a node by its ID
-  const findNodeById = (id, nodesList) => {
-    return nodesList.find(node => node.id === id);
+    const newNodeId = `${type}_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+    
+    // Create the new node
+    const newNode = {
+      id: newNodeId,
+      type: type,
+      name: nodeName,
+      x: newX,
+      y: newY,
+      parentId: parentId,
+      children: [],
+      expanded: false,
+      questions: [],
+      progress: { correct: 0, total: 0 },
+      hasChildren: false
+    };
+    
+    // Update parent's children
+    const updatedNodes = nodes.map(node => {
+      if (node.id === parentId) {
+        return {
+          ...node,
+          children: [...(node.children || []), newNodeId]
+        };
+      }
+      return node;
+    });
+    
+    // Add the new node to state
+    setNodes([...updatedNodes, newNode]);
   };
+  
+  // Get node style based on its type and state
+  const getNodeStyle = (node) => {
+    // Define node sizes based on type
+    let nodeWidth, nodeHeight;
+    
+    if (node.type === 'root') {
+      nodeWidth = 280;
+      nodeHeight = 140;
+    } else if (node.type === 'directory') {
+      nodeWidth = 180;
+      nodeHeight = 100;
+    } else { // leaf
+      nodeWidth = 220;
+      nodeHeight = 60;
+    }
+    
+    const radius = 10;
+    
+    // Base node style
+    const nodeStyle = {
+      position: 'absolute',
+      left: `${node.x - nodeWidth / 2}px`,
+      top: `${node.y - nodeHeight / 2}px`,
+      width: `${nodeWidth}px`,
+      height: `${nodeHeight}px`,
+      borderRadius: `${radius}px`,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#e9ecef',
+      border: `2px solid ${node.locked ? '#aaaaaa' : '#2a9d8f'}`,
+      cursor: 'pointer',
+      boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+      overflow: 'hidden',
+      zIndex: 10,
+      transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+      fontSize: node.type === 'root' ? '18px' : (node.type === 'directory' ? '14px' : '12px'),
+      opacity: 1,
+      padding: '5px'
+    };
 
-  // Draw connector lines
+    // Add customizations based on node type and lock status
+    if (node.type === 'root') {
+      nodeStyle.backgroundColor = node.locked ? '#d0d0d0' : '#e0f3f5';
+      nodeStyle.border = '3px solid #2a9d8f';
+      nodeStyle.boxShadow = '0 3px 10px rgba(0,0,0,0.2)';
+      nodeStyle.fontWeight = 'bold';
+    } else if (node.type === 'directory') {
+      nodeStyle.backgroundColor = node.locked ? '#d0d0d0' : '#d8f3dc';
+      nodeStyle.fontWeight = 'bold';
+    } else if (node.type === 'leaf') {
+      nodeStyle.backgroundColor = node.locked ? '#d0d0d0' : '#f1faee';
+    }
+
+    // If the node is expanded, adjust the height to show questions
+    if (node.expanded && node.type === 'leaf') {
+      // Calculate expanded height based on number of questions
+      // Extra padding to ensure nothing gets cut off
+      const questionsPadding = 80; // Increased padding for more space
+      const expandedHeight = nodeHeight + (node.questions.length * 45) + questionsPadding;
+      
+      nodeStyle.height = `${expandedHeight}px`;
+      // Shift the node up to ensure the expanded content is properly positioned
+      nodeStyle.top = `${node.y - expandedHeight / 2}px`;
+      nodeStyle.zIndex = 20;
+      nodeStyle.width = '350px'; // Increased width from 280px to 350px
+      nodeStyle.left = `${node.x - 175}px`; // Center the expanded node
+      nodeStyle.maxHeight = '500px'; // Set a maximum height
+      nodeStyle.overflowY = 'auto'; // Add vertical scrolling if needed
+    }
+    
+    if (node.id === draggedNode) {
+      nodeStyle.opacity = 0.8;
+      nodeStyle.zIndex = 100;
+      nodeStyle.boxShadow = '0 8px 20px rgba(0,0,0,0.3)';
+    }
+    
+    return nodeStyle;
+  };
+  
+  // Draw connector lines with increased thickness for better visibility
   const renderConnections = useCallback(() => {
     const connections = [];
     
@@ -355,7 +447,7 @@ const MultivariableCalculusTree = () => {
                 x2={childNode.x}
                 y2={childNode.y}
                 stroke="#2a9d8f"
-                strokeWidth="2"
+                strokeWidth="3" // Increased from 2 to 3 for better visibility
               />
             );
           }
@@ -365,6 +457,11 @@ const MultivariableCalculusTree = () => {
     
     return connections;
   }, [nodes]);
+
+  // Helper function to find a node by its ID
+  const findNodeById = (id, nodesList) => {
+    return nodesList.find(node => node.id === id);
+  };
 
   // Removed toggleNodeExpansion from startDrag to separate click from drag
   const toggleNodeExpansion = useCallback((nodeId) => {
@@ -700,51 +797,6 @@ const MultivariableCalculusTree = () => {
     }
   }, [draggedNode, handleDrag, endDrag]);
 
-  // Function to add a new node
-  const addNode = (parentId, type) => {
-    const nodeName = prompt(`Enter name for new ${type} node:`);
-    if (!nodeName || nodeName.trim() === '') return;
-
-    const parent = findNodeById(parentId, nodes);
-    if (!parent) return;
-
-    // Calculate position based on parent's position
-    const newX = parent.x + (type === 'directory' ? 0 : 250);
-    const childCount = parent.children ? parent.children.length : 0;
-    const newY = parent.y + 70 + (childCount * 30);
-
-    const newNodeId = `${type}_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-    
-    // Create the new node
-    const newNode = {
-      id: newNodeId,
-      type: type,
-      name: nodeName,
-      x: newX,
-      y: newY,
-      parentId: parentId,
-      children: [],
-      expanded: false,
-      questions: [],
-      progress: { correct: 0, total: 0 },
-      hasChildren: false
-    };
-    
-    // Update parent's children
-    const updatedNodes = nodes.map(node => {
-      if (node.id === parentId) {
-        return {
-          ...node,
-          children: [...(node.children || []), newNodeId]
-        };
-      }
-      return node;
-    });
-    
-    // Add the new node to state
-    setNodes([...updatedNodes, newNode]);
-  };
-
   // Function to delete a node
   const deleteNode = (nodeId) => {
     const nodeToDelete = findNodeById(nodeId, nodes);
@@ -785,86 +837,42 @@ const MultivariableCalculusTree = () => {
     updateParentProgress();
   };
 
-  // Get node style based on its type and state
-  const getNodeStyle = (node) => {
-    // Define node sizes based on type
-    let nodeWidth, nodeHeight;
-    
-    if (node.type === 'root') {
-      nodeWidth = 280; // Adjusted from 320 to 280
-      nodeHeight = 140;
-    } else if (node.type === 'directory') {
-      nodeWidth = 180;
-      nodeHeight = 100;
-    } else { // leaf
-      nodeWidth = 220;
-      nodeHeight = 60;
-    }
-    
-    const radius = 10;
-    
-    // Base node style
-    const nodeStyle = {
-      position: 'absolute',
-      left: `${node.x - nodeWidth / 2}px`,
-      top: `${node.y - nodeHeight / 2}px`,
-      width: `${nodeWidth}px`,
-      height: `${nodeHeight}px`,
-      borderRadius: `${radius}px`,
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#e9ecef',
-      border: `2px solid ${node.locked ? '#aaaaaa' : '#2a9d8f'}`,
-      cursor: 'pointer', // All nodes are draggable now
-      boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-      overflow: 'hidden',
-      zIndex: 10,
-      transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-      fontSize: node.type === 'root' ? '18px' : (node.type === 'directory' ? '14px' : '12px'),
-      opacity: 1, // All nodes have the same opacity now
-      padding: '5px'
-    };
-
-    // Add customizations based on node type and lock status
-    if (node.type === 'root') {
-      nodeStyle.backgroundColor = node.locked ? '#d0d0d0' : '#e0f3f5';
-      nodeStyle.border = '3px solid #2a9d8f';
-      nodeStyle.boxShadow = '0 3px 10px rgba(0,0,0,0.2)';
-      nodeStyle.fontWeight = 'bold';
-    } else if (node.type === 'directory') {
-      nodeStyle.backgroundColor = node.locked ? '#d0d0d0' : '#d8f3dc';
-      nodeStyle.fontWeight = 'bold';
-    } else if (node.type === 'leaf') {
-      nodeStyle.backgroundColor = node.locked ? '#d0d0d0' : '#f1faee';
-    }
-
-    // If the node is expanded, adjust the height to show questions
-    if (node.expanded && node.type === 'leaf') {
-      // Calculate expanded height based on number of questions
-      // Extra padding to ensure nothing gets cut off
-      const questionsPadding = 80; // Increased padding for more space
-      const expandedHeight = nodeHeight + (node.questions.length * 45) + questionsPadding;
+  // Mark example questions as correct (60% of questions) - only for unlocked nodes
+  useEffect(() => {
+    // Only run once when component is first mounted and nodes are loaded
+    if (nodes.length > 0) {
+      const leafNodes = nodes.filter(node => node.type === 'leaf' && !node.locked);
       
-      nodeStyle.height = `${expandedHeight}px`;
-      // Shift the node up to ensure the expanded content is properly positioned
-      nodeStyle.top = `${node.y - expandedHeight / 2}px`;
-      nodeStyle.zIndex = 20;
-      nodeStyle.width = '350px'; // Increased width from 280px to 350px
-      nodeStyle.left = `${node.x - 175}px`; // Center the expanded node
-      nodeStyle.maxHeight = '500px'; // Set a maximum height
-      nodeStyle.overflowY = 'auto'; // Add vertical scrolling if needed
+      // Mark 60% of questions as correct for each unlocked leaf node
+      const updatedNodes = [...nodes];
+      
+      leafNodes.forEach(leafNode => {
+        if (leafNode.questions && leafNode.questions.length > 0) {
+          const questionsToMark = Math.ceil(leafNode.questions.length * 0.6);
+          const updatedQuestions = [...leafNode.questions];
+          
+          // Mark the first 60% of questions as correct
+          for (let i = 0; i < questionsToMark; i++) {
+            updatedQuestions[i] = { ...updatedQuestions[i], correct: true };
+          }
+          
+          // Update this node
+          const nodeIndex = updatedNodes.findIndex(n => n.id === leafNode.id);
+          if (nodeIndex !== -1) {
+            updatedNodes[nodeIndex] = {
+              ...updatedNodes[nodeIndex],
+              questions: updatedQuestions,
+              progress: { correct: questionsToMark, total: updatedQuestions.length }
+            };
+          }
+        }
+      });
+      
+      setNodes(updatedNodes);
+      // Update directory node progress after marking questions
+      setTimeout(() => updateParentProgress(), 0);
     }
-    
-    if (node.id === draggedNode) {
-      nodeStyle.opacity = 0.8;
-      nodeStyle.zIndex = 100;
-      nodeStyle.boxShadow = '0 8px 20px rgba(0,0,0,0.3)';
-    }
-    
-    return nodeStyle;
-  };
+  }, [nodes.length]);
 
   const renderNodeContent = (node) => {
     return (

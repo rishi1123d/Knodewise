@@ -50,12 +50,12 @@ const MultivariableCalculusTreeStudent = () => {
       };
       initialNodes.push(rootNode);
 
-      // Main sections (middle column)
+      // Main sections (middle column) - Increased X distance from root
       const sectionA = {
         id: 'section-a',
         type: 'directory',
         name: 'A. Vectors and Parameterization',
-        x: 350, // Moved from 400 to 350
+        x: 450, // Increased from 350 to 450 for more space
         y: 100,
         parentId: 'root',
         children: ['topic-a1', 'topic-a2', 'topic-a3', 'topic-a4', 'topic-a5'],
@@ -70,7 +70,7 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'section-b',
         type: 'directory',
         name: 'B. Differentiation',
-        x: 350, // Moved from 400 to 350
+        x: 450, // Increased from 350 to 450 for more space
         y: 350,
         parentId: 'root',
         children: ['topic-b1', 'topic-b2', 'topic-b3', 'topic-b4'],
@@ -85,7 +85,7 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'section-c',
         type: 'directory',
         name: 'C. Multiple Integrals',
-        x: 350, // Moved from 400 to 350
+        x: 450, // Increased from 350 to 450 for more space
         y: 550,
         parentId: 'root',
         children: [],
@@ -101,7 +101,7 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'section-d',
         type: 'directory',
         name: 'D. Vector Calculus',
-        x: 350, // Moved from 400 to 350
+        x: 450, // Increased from 350 to 450 for more space
         y: 650,
         parentId: 'root',
         children: [],
@@ -113,12 +113,12 @@ const MultivariableCalculusTreeStudent = () => {
       };
       initialNodes.push(sectionD);
 
-      // Topics for Section A with comprehensive examples
+      // Topics for Section A with comprehensive examples - Increased X distance from directory nodes
       const topicA1 = {
         id: 'topic-a1',
         type: 'leaf',
         name: 'A.1 Multivariable Functions',
-        x: 580, // Moved from 700 to 580
+        x: 750, // Increased from 580 to 750 for more space
         y: 50, // Adjusted positioning
         parentId: 'section-a',
         children: [],
@@ -137,7 +137,7 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'topic-a2',
         type: 'leaf',
         name: 'A.2 Vector Algebra and Matrices',
-        x: 580, // Moved from 700 to 580
+        x: 750, // Increased from 580 to 750 for more space
         y: 110, // Adjusted positioning
         parentId: 'section-a',
         children: [],
@@ -158,7 +158,7 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'topic-a3',
         type: 'leaf',
         name: 'A.3 Dot Product and Cross Product',
-        x: 580, // Moved from 700 to 580
+        x: 750, // Increased from 580 to 750 for more space
         y: 170, // Adjusted positioning
         parentId: 'section-a',
         children: [],
@@ -178,7 +178,7 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'topic-a4',
         type: 'leaf',
         name: 'A.4 Parameterized Curves',
-        x: 580, // Moved from 700 to 580
+        x: 750, // Increased from 580 to 750 for more space
         y: 230, // Adjusted positioning
         parentId: 'section-a',
         children: [],
@@ -196,7 +196,7 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'topic-a5',
         type: 'leaf',
         name: 'A.5 Derivatives and Arc Length',
-        x: 580, // Moved from 700 to 580
+        x: 750, // Increased from 580 to 750 for more space
         y: 290, // Adjusted positioning
         parentId: 'section-a',
         children: [],
@@ -216,7 +216,7 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'topic-b1',
         type: 'leaf',
         name: 'B.1 Graphs and Level Sets',
-        x: 580, // Moved from 700 to 580
+        x: 750, // Increased from 580 to 750 for more space
         y: 350, // Adjusted positioning
         parentId: 'section-b',
         children: [],
@@ -238,7 +238,7 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'topic-b2',
         type: 'leaf',
         name: 'B.2 Equations of Lines and Planes',
-        x: 580, // Moved from 700 to 580
+        x: 750, // Increased from 580 to 750 for more space
         y: 410, // Adjusted positioning
         parentId: 'section-b',
         children: [],
@@ -257,7 +257,7 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'topic-b3',
         type: 'leaf',
         name: 'B.3 Continuity and Limits',
-        x: 580, // Moved from 700 to 580
+        x: 750, // Increased from 580 to 750 for more space
         y: 470, // Adjusted positioning
         parentId: 'section-b',
         children: [],
@@ -273,7 +273,7 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'topic-b4',
         type: 'leaf',
         name: 'B.4 Partial Derivatives and Linearization',
-        x: 580, // Moved from 700 to 580
+        x: 750, // Increased from 580 to 750 for more space
         y: 530, // Adjusted positioning
         parentId: 'section-b',
         children: [],
