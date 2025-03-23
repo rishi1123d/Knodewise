@@ -6,29 +6,47 @@ const MultivariableCalculusTreeStudent = () => {
   const [selectedNode, setSelectedNode] = useState(null);
   const [draggedNode, setDraggedNode] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [nodeMoved, setNodeMoved] = useState(false);
+  const [dragDistance, setDragDistance] = useState(0);
+  
   const svgRef = useRef(null);
   const treeContainerRef = useRef(null);
+  const dragThreshold = 5; // Minimum distance in pixels to consider it a drag
+
+  // Calculate the percentage for progress display with N/A handling
+  const calculatePercentage = (correct, total, hasChildren, isLocked) => {
+    if (isLocked || total === 0 || !hasChildren) return "N/A";
+    return Math.round((correct / total) * 100) + "%";
+  };
+
+  // Get color based on progress percentage and lock status
+  const getProgressColor = (correct, total, hasChildren, isLocked) => {
+    if (isLocked || total === 0 || !hasChildren) return '#6c757d'; // Gray for locked, no progress or no children
+    
+    const percentage = (correct / total) * 100;
+    
+    if (percentage < 30) return '#d62828'; // Red
+    if (percentage < 60) return '#f77f00'; // Orange
+    if (percentage < 85) return '#fcbf49'; // Yellow
+    return '#38b000'; // Green
+  };
 
   // Create the initial tree structure with Multivariable Calculus data
   useEffect(() => {
     if (nodes.length === 0) {
-      // Initialize with the same data as before...
-      // This part remains unchanged
       const initialNodes = [];
 
       // Root node (leftmost)
       const rootNode = {
         id: 'root',
         type: 'root',
-        name: 'Math 250: Multivariable Calculus',
-        x: 150,
+        name: 'Math 250:\nMultivariable Calculus', // Added line break for better display
+        x: 120, // Moved left from 150 to 120
         y: 300,
         children: ['section-a', 'section-b', 'section-c', 'section-d'],
         expanded: false,
         questions: [],
-        progress: { correct: 5, total: 50 } // Representing approx 1/4 completion
+        progress: { correct: 5, total: 50 }, // Representing approx 1/4 completion
+        hasChildren: true
       };
       initialNodes.push(rootNode);
 
@@ -37,13 +55,14 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'section-a',
         type: 'directory',
         name: 'A. Vectors and Parameterization',
-        x: 400,
+        x: 350, // Moved from 400 to 350
         y: 100,
         parentId: 'root',
         children: ['topic-a1', 'topic-a2', 'topic-a3', 'topic-a4', 'topic-a5'],
         expanded: false,
         questions: [],
-        progress: { correct: 6, total: 25 } 
+        progress: { correct: 6, total: 25 },
+        hasChildren: true
       };
       initialNodes.push(sectionA);
 
@@ -51,13 +70,14 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'section-b',
         type: 'directory',
         name: 'B. Differentiation',
-        x: 400,
+        x: 350, // Moved from 400 to 350
         y: 350,
         parentId: 'root',
         children: ['topic-b1', 'topic-b2', 'topic-b3', 'topic-b4'],
         expanded: false,
         questions: [],
-        progress: { correct: 0, total: 20 }
+        progress: { correct: 0, total: 20 },
+        hasChildren: true
       };
       initialNodes.push(sectionB);
 
@@ -65,14 +85,15 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'section-c',
         type: 'directory',
         name: 'C. Multiple Integrals',
-        x: 400,
+        x: 350, // Moved from 400 to 350
         y: 550,
         parentId: 'root',
         children: [],
         expanded: false,
         questions: [],
         progress: { correct: 0, total: 5 },
-        locked: true
+        locked: true,
+        hasChildren: false
       };
       initialNodes.push(sectionC);
 
@@ -80,14 +101,15 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'section-d',
         type: 'directory',
         name: 'D. Vector Calculus',
-        x: 400,
+        x: 350, // Moved from 400 to 350
         y: 650,
         parentId: 'root',
         children: [],
         expanded: false,
         questions: [],
         progress: { correct: 0, total: 6 },
-        locked: true
+        locked: true,
+        hasChildren: false
       };
       initialNodes.push(sectionD);
 
@@ -96,7 +118,7 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'topic-a1',
         type: 'leaf',
         name: 'A.1 Multivariable Functions',
-        x: 700,
+        x: 580, // Moved from 700 to 580
         y: 50, // Adjusted positioning
         parentId: 'section-a',
         children: [],
@@ -104,11 +126,10 @@ const MultivariableCalculusTreeStudent = () => {
         questions: [
           { id: 'q-a1-1', text: 'What is the domain of f(x,y) = ln(1-x²-y²)?', correct: true },
           { id: 'q-a1-2', text: 'Define a multivariable function and give an example.', correct: true },
-          { id: 'q-a1-3', text: 'What is the range of f(x,y) = x² + y²?', correct: true },
-          { id: 'q-a1-4', text: 'When is a multivariable function considered bounded?', correct: false },
-          { id: 'q-a1-5', text: 'Sketch the surface z = xy', correct: false }
+          { id: 'q-a1-3', text: 'What is the range of f(x,y) = x² + y²?', correct: true }
         ],
-        progress: { correct: 3, total: 5 }
+        progress: { correct: 3, total: 3 },
+        hasChildren: true
       };
       initialNodes.push(topicA1);
 
@@ -116,7 +137,7 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'topic-a2',
         type: 'leaf',
         name: 'A.2 Vector Algebra and Matrices',
-        x: 700,
+        x: 580, // Moved from 700 to 580
         y: 110, // Adjusted positioning
         parentId: 'section-a',
         children: [],
@@ -128,7 +149,8 @@ const MultivariableCalculusTreeStudent = () => {
           { id: 'q-a2-4', text: 'Find the determinant of a 2×2 matrix [[a,b],[c,d]]', correct: false },
           { id: 'q-a2-5', text: 'When is a matrix considered invertible?', correct: false }
         ],
-        progress: { correct: 3, total: 5 }
+        progress: { correct: 3, total: 5 },
+        hasChildren: true
       };
       initialNodes.push(topicA2);
 
@@ -136,17 +158,19 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'topic-a3',
         type: 'leaf',
         name: 'A.3 Dot Product and Cross Product',
-        x: 700,
+        x: 580, // Moved from 700 to 580
         y: 170, // Adjusted positioning
         parentId: 'section-a',
         children: [],
         expanded: false,
         questions: [
-          { id: 'q-a3-1', text: 'Calculate the dot product of <2,3,4> and <1,-1,2>', correct: true },
-          { id: 'q-a3-2', text: 'Find the cross product of <1,0,0> and <0,1,0>', correct: true },
-          { id: 'q-a3-3', text: 'What is the geometric interpretation of the dot product?', correct: false }
+          { id: 'q-a3-1', text: 'Find the angle between vectors [1,2,3] and [4,5,6]', correct: false },
+          { id: 'q-a3-2', text: 'Calculate the cross product of [1,0,0] and [0,1,0]', correct: false },
+          { id: 'q-a3-3', text: 'When are two vectors perpendicular?', correct: false },
+          { id: 'q-a3-4', text: 'What is the geometric interpretation of the cross product?', correct: false }
         ],
-        progress: { correct: 2, total: 3 }
+        progress: { correct: 0, total: 4 },
+        hasChildren: true
       };
       initialNodes.push(topicA3);
 
@@ -154,19 +178,17 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'topic-a4',
         type: 'leaf',
         name: 'A.4 Parameterized Curves',
-        x: 700,
+        x: 580, // Moved from 700 to 580
         y: 230, // Adjusted positioning
         parentId: 'section-a',
         children: [],
         expanded: false,
         questions: [
-          { id: 'q-a4-1', text: 'Parameterize the line from (1,2,3) to (4,5,6)', correct: true },
-          { id: 'q-a4-2', text: 'Parameterize a circle of radius 3 centered at the origin in the xy-plane', correct: true },
-          { id: 'q-a4-3', text: 'What is the velocity vector for the curve r(t) = <t², t³, t> at t=2?', correct: false },
-          { id: 'q-a4-4', text: 'Parameterize a helix that makes 2 complete turns between z=0 and z=4', correct: false },
-          { id: 'q-a4-5', text: 'Find a parameterization of the sphere x² + y² + z² = 16', correct: false }
+          { id: 'q-a4-1', text: 'Parameterize a circle of radius 5 centered at the origin', correct: false },
+          { id: 'q-a4-2', text: 'Find the parameterization of the line through (1,2,3) and (4,5,6)', correct: false }
         ],
-        progress: { correct: 2, total: 5 }
+        progress: { correct: 0, total: 2 },
+        hasChildren: true
       };
       initialNodes.push(topicA4);
 
@@ -174,16 +196,18 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'topic-a5',
         type: 'leaf',
         name: 'A.5 Derivatives and Arc Length',
-        x: 700,
+        x: 580, // Moved from 700 to 580
         y: 290, // Adjusted positioning
         parentId: 'section-a',
         children: [],
         expanded: false,
         questions: [
-          { id: 'q-a5-1', text: 'Calculate the arc length of r(t) = <t, t², t³> for 0 ≤ t ≤ 1', correct: false },
-          { id: 'q-a5-2', text: 'Find the unit tangent vector for r(t) = <cos t, sin t, t> at t=π/4', correct: true }
+          { id: 'q-a5-1', text: 'Find the derivative of r(t) = (t², t³, t⁴) at t=1', correct: false },
+          { id: 'q-a5-2', text: 'Calculate the arc length of r(t) = (t, t², t³) for t ∈ [0,1]', correct: false },
+          { id: 'q-a5-3', text: 'What is the unit tangent vector?', correct: false }
         ],
-        progress: { correct: 1, total: 2 }
+        progress: { correct: 0, total: 3 },
+        hasChildren: true
       };
       initialNodes.push(topicA5);
 
@@ -192,18 +216,21 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'topic-b1',
         type: 'leaf',
         name: 'B.1 Graphs and Level Sets',
-        x: 700,
+        x: 580, // Moved from 700 to 580
         y: 350, // Adjusted positioning
         parentId: 'section-b',
         children: [],
         expanded: false,
         questions: [
-          { id: 'q-b1-1', text: 'Describe the level sets of f(x,y) = x² + y²', correct: true },
-          { id: 'q-b1-2', text: 'Sketch the level curves of f(x,y) = xy for c = -2, 0, and 2', correct: false },
-          { id: 'q-b1-3', text: 'Describe the graph of z = x² - y²', correct: false },
-          { id: 'q-b1-4', text: 'What is the relationship between level curves and contour plots?', correct: true }
+          { id: 'q-b1-1', text: 'Sketch the level curves of f(x,y) = x² + y²', correct: false },
+          { id: 'q-b1-2', text: 'What is the level set of f(x,y,z) = x + y + z at level 5?', correct: false },
+          { id: 'q-b1-3', text: 'Describe the level curves of f(x,y) = x - y', correct: false },
+          { id: 'q-b1-4', text: 'Identify the shape of level curves for f(x,y) = x² - y²', correct: false },
+          { id: 'q-b1-5', text: 'How do you use level sets to visualize multivariable functions?', correct: false },
+          { id: 'q-b1-6', text: 'What does it mean when level curves are close together?', correct: false }
         ],
-        progress: { correct: 2, total: 4 }
+        progress: { correct: 0, total: 6 },
+        hasChildren: true
       };
       initialNodes.push(topicB1);
 
@@ -211,17 +238,18 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'topic-b2',
         type: 'leaf',
         name: 'B.2 Equations of Lines and Planes',
-        x: 700,
+        x: 580, // Moved from 700 to 580
         y: 410, // Adjusted positioning
         parentId: 'section-b',
         children: [],
         expanded: false,
         questions: [
-          { id: 'q-b2-1', text: 'Find the equation of the plane passing through (1,2,3) with normal vector <3,2,1>', correct: true },
-          { id: 'q-b2-2', text: 'Write the symmetric equations for the line through (2,3,4) in the direction <1,1,1>', correct: false },
-          { id: 'q-b2-3', text: 'Find the distance from the point (2,2,2) to the plane x + y + z = 3', correct: false }
+          { id: 'q-b2-1', text: 'Find the equation of a plane through (1,2,3) with normal vector [1,1,1]', correct: false },
+          { id: 'q-b2-2', text: 'What is the vector equation of a line?', correct: false },
+          { id: 'q-b2-3', text: 'Find the distance from point (2,3,4) to the plane x + y + z = 1', correct: false }
         ],
-        progress: { correct: 1, total: 3 }
+        progress: { correct: 0, total: 3 },
+        hasChildren: true
       };
       initialNodes.push(topicB2);
 
@@ -229,14 +257,15 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'topic-b3',
         type: 'leaf',
         name: 'B.3 Continuity and Limits',
-        x: 700,
+        x: 580, // Moved from 700 to 580
         y: 470, // Adjusted positioning
         parentId: 'section-b',
         children: [],
         expanded: false,
         questions: [],
         progress: { correct: 0, total: 0 },
-        locked: true
+        locked: true,
+        hasChildren: false
       };
       initialNodes.push(topicB3);
 
@@ -244,14 +273,15 @@ const MultivariableCalculusTreeStudent = () => {
         id: 'topic-b4',
         type: 'leaf',
         name: 'B.4 Partial Derivatives and Linearization',
-        x: 700,
+        x: 580, // Moved from 700 to 580
         y: 530, // Adjusted positioning
         parentId: 'section-b',
         children: [],
         expanded: false,
         questions: [],
         progress: { correct: 0, total: 0 },
-        locked: true
+        locked: true,
+        hasChildren: false
       };
       initialNodes.push(topicB4);
 
@@ -292,7 +322,7 @@ const MultivariableCalculusTreeStudent = () => {
     return connections;
   }, [nodes]);
 
-  // Toggle node expansion
+  // Removed toggleNodeExpansion from startDrag to separate click from drag
   const toggleNodeExpansion = useCallback((nodeId) => {
     setNodes(prevNodes => 
       prevNodes.map(node => 
@@ -302,23 +332,95 @@ const MultivariableCalculusTreeStudent = () => {
     setSelectedNode(nodeId);
   }, []);
 
-  // Calculate the percentage for progress display
-  const calculatePercentage = (correct, total) => {
-    if (total === 0) return 0;
-    return Math.round((correct / total) * 100);
-  };
-
-  // Get color based on progress percentage
-  const getProgressColor = (correct, total, locked) => {
-    if (locked) return '#6c757d'; // Gray for locked nodes
-    if (total === 0) return '#6c757d'; // Gray for no progress
-    
-    const percentage = (correct / total) * 100;
-    
-    if (percentage < 30) return '#d62828'; // Red
-    if (percentage < 60) return '#f77f00'; // Orange
-    if (percentage < 85) return '#fcbf49'; // Yellow
-    return '#38b000'; // Green
+  // Update progress for all directory and root nodes
+  const updateParentProgress = () => {
+    setNodes(prevNodes => {
+      // Create a copy of the nodes
+      const updatedNodes = [...prevNodes];
+      
+      // First handle leaf nodes to make sure their progress is up to date
+      const leafNodes = updatedNodes.filter(n => n.type === 'leaf');
+      leafNodes.forEach(leafNode => {
+        if (leafNode.questions && leafNode.questions.length > 0) {
+          const correct = leafNode.questions.filter(q => q.correct === true).length;
+          const total = leafNode.questions.length;
+          const nodeIndex = updatedNodes.findIndex(n => n.id === leafNode.id);
+          if (nodeIndex !== -1) {
+            updatedNodes[nodeIndex] = {
+              ...updatedNodes[nodeIndex],
+              progress: { correct, total }
+            };
+          }
+        }
+      });
+      
+      // Create a map to track the total corrects and totals for the entire tree
+      const totalStats = {
+        correct: 0,
+        total: 0
+      };
+      
+      // Count all unlocked leaf node stats for overall progress
+      leafNodes.forEach(leafNode => {
+        if (!leafNode.locked) {
+          totalStats.correct += leafNode.progress.correct;
+          totalStats.total += leafNode.progress.total;
+        }
+      });
+      
+      // Now process directory nodes from bottom up
+      // First get all directory nodes and sort them by depth (children first)
+      const directoryNodes = updatedNodes.filter(n => n.type === 'directory').sort((a, b) => {
+        // Simple approximation: nodes with more child directories are likely deeper
+        const aChildDirs = updatedNodes.filter(n => n.parentId === a.id && n.type === 'directory').length;
+        const bChildDirs = updatedNodes.filter(n => n.parentId === b.id && n.type === 'directory').length;
+        return bChildDirs - aChildDirs;
+      });
+      
+      // Process each directory to update its progress
+      directoryNodes.forEach(dirNode => {
+        const childProgress = { correct: 0, total: 0 };
+        let hasChildren = false;
+        
+        // Collect progress from direct children only if they are not locked
+        dirNode.children.forEach(childId => {
+          const childNode = updatedNodes.find(n => n.id === childId);
+          if (childNode && !childNode.locked) {
+            hasChildren = true;
+            childProgress.correct += childNode.progress.correct;
+            childProgress.total += childNode.progress.total;
+          }
+        });
+        
+        // Update this directory node's progress
+        const nodeIndex = updatedNodes.findIndex(n => n.id === dirNode.id);
+        if (nodeIndex !== -1) {
+          updatedNodes[nodeIndex] = {
+            ...updatedNodes[nodeIndex],
+            progress: childProgress,
+            hasChildren: hasChildren
+          };
+        }
+      });
+      
+      // Finally, update the root node with overall stats from all unlocked leaf nodes
+      const rootNode = updatedNodes.find(n => n.type === 'root');
+      if (rootNode) {
+        const rootIndex = updatedNodes.findIndex(n => n.id === rootNode.id);
+        if (rootIndex !== -1) {
+          updatedNodes[rootIndex] = {
+            ...updatedNodes[rootIndex],
+            progress: { 
+              correct: totalStats.correct, 
+              total: totalStats.total 
+            },
+            hasChildren: totalStats.total > 0
+          };
+        }
+      }
+      
+      return updatedNodes;
+    });
   };
 
   // Mark a question as correct or incorrect
@@ -343,53 +445,20 @@ const MultivariableCalculusTreeStudent = () => {
         return node;
       });
       
-      // Then update all parent nodes recursively
-      const updateParentProgress = (nodesList, childId) => {
-        const childNode = nodesList.find(n => n.id === childId);
-        if (!childNode || !childNode.parentId) return nodesList;
-        
-        const parentNode = nodesList.find(n => n.id === childNode.parentId);
-        if (!parentNode) return nodesList;
-        
-        // Calculate total progress across all children
-        let totalCorrect = 0;
-        let totalQuestions = 0;
-        
-        parentNode.children.forEach(id => {
-          const child = nodesList.find(n => n.id === id);
-          if (child) {
-            totalCorrect += child.progress.correct;
-            totalQuestions += child.progress.total;
-          }
-        });
-        
-        // Update parent's progress
-        const updatedList = nodesList.map(n => 
-          n.id === parentNode.id ? 
-            { ...n, progress: { correct: totalCorrect, total: totalQuestions } } : 
-            n
-        );
-        
-        // Continue up the tree if there are more parents
-        if (parentNode.parentId) {
-          return updateParentProgress(updatedList, parentNode.id);
-        }
-        
-        return updatedList;
-      };
-      
-      return updateParentProgress(updatedNodes, nodeId);
+      return updatedNodes;
     });
+    
+    // Then update all parent nodes recursively
+    setTimeout(() => updateParentProgress(), 0);
   };
 
-  // Handle node dragging - improved to better distinguish between clicks and drags
-  const handleMouseDown = useCallback((e, nodeId) => {
+  // Handle node dragging - all nodes can be dragged
+  const startDrag = (e, nodeId) => {
     // Don't start dragging if clicked on a button or input
     if (
       e.target.tagName.toLowerCase() === 'button' ||
       e.target.tagName.toLowerCase() === 'input' ||
-      e.target.closest('.questions-list') ||
-      e.target.classList.contains('node-action')
+      e.target.closest('.questions-list')
     ) {
       return;
     }
@@ -398,80 +467,66 @@ const MultivariableCalculusTreeStudent = () => {
     if (!node) return;
 
     const containerRect = treeContainerRef.current.getBoundingClientRect();
-    const clientX = e.clientX - containerRect.left;
-    const clientY = e.clientY - containerRect.top;
+    const offsetX = e.clientX - containerRect.left - node.x;
+    const offsetY = e.clientY - containerRect.top - node.y;
     
-    setDragStart({ x: clientX, y: clientY });
     setDraggedNode(nodeId);
-    setDragOffset({ 
-      x: clientX - node.x, 
-      y: clientY - node.y 
-    });
-    setNodeMoved(false);
+    setDragOffset({ x: offsetX, y: offsetY });
+    setDragDistance(0); // Reset drag distance
     
     e.preventDefault();
     e.stopPropagation();
-  }, [nodes]);
+  };
 
-  const handleMouseMove = useCallback((e) => {
+  const handleDrag = useCallback((e) => {
     if (!draggedNode) return;
 
     const containerRect = treeContainerRef.current.getBoundingClientRect();
-    const clientX = e.clientX - containerRect.left;
-    const clientY = e.clientY - containerRect.top;
-    
-    // Calculate distance moved
-    const dx = clientX - dragStart.x;
-    const dy = clientY - dragStart.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    
-    // Set nodeMoved if moved more than 5 pixels
-    if (distance > 5) {
-      setNodeMoved(true);
+    const x = e.clientX - containerRect.left - dragOffset.x;
+    const y = e.clientY - containerRect.top - dragOffset.y;
+
+    // Calculate drag distance using Euclidean distance
+    const node = findNodeById(draggedNode, nodes);
+    if (node) {
+      const dx = x - node.x;
+      const dy = y - node.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      setDragDistance(prevDistance => prevDistance + distance);
     }
-    
-    // Update node position
+
     setNodes(prevNodes => 
       prevNodes.map(node => 
-        node.id === draggedNode ? { 
-          ...node, 
-          x: clientX - dragOffset.x, 
-          y: clientY - dragOffset.y 
-        } : node
+        node.id === draggedNode ? { ...node, x, y } : node
       )
     );
     
     e.preventDefault();
     e.stopPropagation();
-  }, [draggedNode, dragOffset, dragStart]);
+  }, [draggedNode, dragOffset.x, dragOffset.y, treeContainerRef, nodes]);
 
-  const handleMouseUp = useCallback((e) => {
-    if (!draggedNode) return;
-    
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // If the node wasn't moved significantly, treat it as a click
-    if (!nodeMoved) {
-      toggleNodeExpansion(draggedNode);
+  const endDrag = useCallback((e) => {
+    if (draggedNode) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Only toggle node expansion if it wasn't a significant drag
+      if (dragDistance < dragThreshold) {
+        toggleNodeExpansion(draggedNode);
+      }
     }
-    
-    // Reset drag state
     setDraggedNode(null);
-    setNodeMoved(false);
-  }, [draggedNode, nodeMoved, toggleNodeExpansion]);
+  }, [draggedNode, dragDistance, toggleNodeExpansion, dragThreshold]);
 
-  // Set up event listeners
   useEffect(() => {
     if (draggedNode) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('mousemove', handleDrag);
+      document.addEventListener('mouseup', endDrag);
       return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('mousemove', handleDrag);
+        document.removeEventListener('mouseup', endDrag);
       };
     }
-  }, [draggedNode, handleMouseMove, handleMouseUp]);
+  }, [draggedNode, handleDrag, endDrag]);
 
   // Get node style based on its type and state
   const getNodeStyle = (node) => {
@@ -479,14 +534,14 @@ const MultivariableCalculusTreeStudent = () => {
     let nodeWidth, nodeHeight;
     
     if (node.type === 'root') {
-      nodeWidth = 220;
-      nodeHeight = 120; // Increased from 90
+      nodeWidth = 280; // Adjusted from 320 to 280
+      nodeHeight = 140;
     } else if (node.type === 'directory') {
       nodeWidth = 180;
-      nodeHeight = 100; // Increased from 70
+      nodeHeight = 100;
     } else { // leaf
-      nodeWidth = 220;  // Wider leaf nodes
-      nodeHeight = 60;  // Taller leaf nodes - increased from 50
+      nodeWidth = 220;
+      nodeHeight = 60;
     }
     
     const radius = 10;
@@ -505,19 +560,19 @@ const MultivariableCalculusTreeStudent = () => {
       alignItems: 'center',
       backgroundColor: '#e9ecef',
       border: `2px solid ${node.locked ? '#aaaaaa' : '#2a9d8f'}`,
-      cursor: 'pointer',
+      cursor: 'pointer', // All nodes are draggable
       boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
       overflow: 'hidden',
       zIndex: 10,
       transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-      fontSize: node.type === 'root' ? '16px' : (node.type === 'directory' ? '14px' : '12px'),
+      fontSize: node.type === 'root' ? '18px' : (node.type === 'directory' ? '14px' : '12px'),
       opacity: 1,
       padding: '5px'
     };
 
-    // Add customizations based on node type
+    // Add customizations based on node type and lock status
     if (node.type === 'root') {
-      nodeStyle.backgroundColor = '#e0f3f5';
+      nodeStyle.backgroundColor = node.locked ? '#d0d0d0' : '#e0f3f5';
       nodeStyle.border = '3px solid #2a9d8f';
       nodeStyle.boxShadow = '0 3px 10px rgba(0,0,0,0.2)';
       nodeStyle.fontWeight = 'bold';
@@ -530,12 +585,19 @@ const MultivariableCalculusTreeStudent = () => {
 
     // If the node is expanded, adjust the height to show questions
     if (node.expanded && node.type === 'leaf') {
-      const expandedHeight = nodeHeight + (node.questions.length * 35) + 40; // Extra space for add button
+      // Calculate expanded height based on number of questions
+      // Extra padding to ensure nothing gets cut off
+      const questionsPadding = 80; // Increased padding for more space
+      const expandedHeight = nodeHeight + (node.questions.length * 45) + questionsPadding;
+      
       nodeStyle.height = `${expandedHeight}px`;
+      // Shift the node up to ensure the expanded content is properly positioned
       nodeStyle.top = `${node.y - expandedHeight / 2}px`;
       nodeStyle.zIndex = 20;
-      nodeStyle.width = '280px'; // Make expanded leaf nodes wider
-      nodeStyle.left = `${node.x - 140}px`; // Center the expanded node
+      nodeStyle.width = '350px'; // Increased width from 280px to 350px
+      nodeStyle.left = `${node.x - 175}px`; // Center the expanded node
+      nodeStyle.maxHeight = '500px'; // Set a maximum height
+      nodeStyle.overflowY = 'auto'; // Add vertical scrolling if needed
     }
     
     if (node.id === draggedNode) {
@@ -550,27 +612,28 @@ const MultivariableCalculusTreeStudent = () => {
   const renderNodeContent = (node) => {
     return (
       <>
-        {/* Node Title */}
+        {/* Node Title - larger and clearly visible */}
         <div 
           style={{ 
             fontWeight: 'inherit', 
             marginBottom: '5px',
             padding: '0 5px',
             textAlign: 'center',
-            fontSize: node.type === 'root' ? '16px' : (node.type === 'directory' ? '14px' : '12px'),
-            width: '100%',
+            fontSize: node.type === 'root' ? '20px' : (node.type === 'directory' ? '14px' : '13px'), // Increased root font size
+            width: '95%',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            whiteSpace: node.type === 'leaf' ? 'normal' : 'nowrap'
+            whiteSpace: node.type === 'root' ? 'pre-line' : (node.type === 'leaf' ? 'normal' : 'nowrap'),
+            lineHeight: node.type === 'root' ? '1.3' : 'inherit',
           }}
         >
           {node.locked && <span style={{ marginRight: '5px' }}>🔒</span>}
-          <span>{node.name}</span>
+          {node.name}
         </div>
         
         {/* Progress Display */}
         <div style={{ 
-          backgroundColor: getProgressColor(node.progress.correct, node.progress.total, node.locked),
+          backgroundColor: getProgressColor(node.progress.correct, node.progress.total, node.hasChildren, node.locked),
           padding: '2px 8px',
           borderRadius: '10px',
           fontSize: node.type === 'root' ? '14px' : '12px',
@@ -578,27 +641,29 @@ const MultivariableCalculusTreeStudent = () => {
           marginTop: '4px'
         }}>
           {node.locked ? 
-            'Locked' : 
+            "Locked" : 
             (node.type === 'leaf' ? 
               `${node.progress.correct}/${node.progress.total}` : 
-              `${calculatePercentage(node.progress.correct, node.progress.total)}%`
+              calculatePercentage(node.progress.correct, node.progress.total, node.hasChildren, node.locked)
             )
           }
         </div>
         
         {/* Expanded Leaf Node Questions */}
-        {node.expanded && node.type === 'leaf' && (
+        {node.expanded && node.type === 'leaf' && !node.locked && (
           <div style={{ 
-            marginTop: '10px', 
-            width: '100%', 
+            marginTop: '15px', // Increased top margin for better spacing 
+            width: '95%',
             padding: '0 10px',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center'
+            alignItems: 'center',
+            maxHeight: '420px', // Max height for scrolling
+            overflowY: 'auto',  // Add vertical scrolling
           }}>
             {node.questions.length === 0 ? (
-              <div style={{ fontStyle: 'italic', color: '#999', fontSize: '11px', marginBottom: '10px' }}>
-                No questions added
+              <div style={{ fontStyle: 'italic', color: '#999', fontSize: '11px', marginBottom: '12px' }}>
+                No questions available
               </div>
             ) : (
               node.questions.map(q => (
@@ -606,16 +671,16 @@ const MultivariableCalculusTreeStudent = () => {
                   display: 'flex', 
                   alignItems: 'center', 
                   width: '100%',
-                  marginBottom: '5px',
-                  padding: '5px',
+                  marginBottom: '10px', // Increased margin between questions
+                  padding: '8px',
                   backgroundColor: 'rgba(255,255,255,0.5)',
                   borderRadius: '5px',
-                  fontSize: '11px'
+                  fontSize: '12px'
                 }}>
-                  <div style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <div style={{ flex: 1, overflow: 'visible', padding: '0 5px' }}>
                     {q.text}
                   </div>
-                  <div style={{ display: 'flex', gap: '4px' }}>
+                  <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
                     <button 
                       onClick={(e) => {
                         e.stopPropagation();
@@ -701,7 +766,7 @@ const MultivariableCalculusTreeStudent = () => {
             const baseNodeProps = {
               key: node.id,
               style: getNodeStyle(node),
-              onMouseDown: (e) => handleMouseDown(e, node.id),
+              onMouseDown: (e) => startDrag(e, node.id),
               className: `knowledge-node ${node.type} ${node.expanded ? 'expanded' : ''} ${node.locked ? 'locked' : ''} ${draggedNode === node.id ? 'dragging' : ''}`
             };
             
@@ -730,6 +795,32 @@ const MultivariableCalculusTreeStudent = () => {
         <p style={{ fontSize: '12px', margin: '2px 0' }}>• Click on leaf nodes to expand and see questions</p>
         <p style={{ fontSize: '12px', margin: '2px 0' }}>• Mark questions ✓ or ✗ to update your progress</p>
       </div>
+      
+      <style jsx>{`
+        .knowledge-tree-container {
+          scroll-behavior: smooth;
+        }
+        
+        .knowledge-node {
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .knowledge-node:hover {
+          transform: scale(1.05);
+          box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+          z-index: 30;
+        }
+        
+        .knowledge-node.locked {
+          cursor: default;
+          opacity: 0.8;
+        }
+        
+        .knowledge-node.dragging {
+          cursor: grabbing !important;
+          transform: scale(1.05);
+        }
+      `}</style>
     </div>
   );
 };
