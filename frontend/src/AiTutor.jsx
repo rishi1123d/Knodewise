@@ -457,13 +457,7 @@ const AiTutor = () => {
   )
 
   return (
-    <div
-      style={{
-        position: "relative",
-        height: "100vh",
-        background: "radial-gradient(circle at center, #001030 0%, #000814 70%, #000000 100%)",
-      }}
-    >
+    <div className="ai-tutor-container">
       {!renderError && <div ref={containerRef} style={{ position: "absolute", top: 0, left: 0 }} />}
       {renderError && renderFallbackContent()}
 
