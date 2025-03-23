@@ -1,0 +1,363 @@
+/* Base styles for the knowledge tree */
+.knowledge-tree-container {
+  width: 100%;
+  min-height: 800px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  font-family: Arial, sans-serif;
+  position: relative;
+  overflow: auto;
+}
+
+/* Node styles */
+.node {
+  background-color: #e7e7e7;
+  border: 2px solid #4CAF50;
+  border-radius: 15px;
+  padding: 10px 15px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+  position: relative;
+}
+
+.node h2, .node h3, .node h4 {
+  margin: 0;
+  color: #333;
+}
+
+.node h2 {
+  font-size: 20px;
+}
+
+.node h3 {
+  font-size: 16px;
+}
+
+.node h4 {
+  font-size: 14px;
+}
+
+/* Root node specific styles */
+.root-node {
+  width: 240px;
+  padding: 15px;
+  margin: 0 auto;
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+.understanding-level {
+  background-color: #4CAF50;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* Topic nodes */
+.topic-node {
+  width: 180px;
+  position: absolute;
+}
+
+.limits-topic {
+  top: -170px;
+  left: -100px;
+}
+
+.derivatives-topic {
+  top: 0;
+  right: -300px;
+}
+
+/* Subtopic nodes */
+.subtopic-node {
+  width: 150px;
+  position: absolute;
+}
+
+.limits-at-point {
+  top: -100px;
+  left: 0;
+}
+
+.continuity {
+  top: -100px;
+  right: -50px;
+}
+
+.derivative-rules {
+  top: -50px;
+  right: -240px;
+}
+
+/* Concept nodes */
+.concept-node {
+  background-color: #e7e7e7;
+  border: 2px solid #4CAF50;
+  border-radius: 25px;
+  padding: 8px 15px;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 5px;
+  min-width: 110px;
+  position: absolute;
+}
+
+.score {
+  font-size: 10px;
+  margin-top: 5px;
+}
+
+/* Progress pills */
+.progress-pill {
+  padding: 3px 10px;
+  border-radius: 15px;
+  color: white;
+  font-size: 12px;
+  margin-top: 5px;
+  display: inline-block;
+}
+
+.green {
+  background-color: #4CAF50;
+}
+
+.yellow {
+  background-color: #FFC107;
+}
+
+.red {
+  background-color: #F44336;
+}
+
+/* Locked nodes */
+.locked-node {
+  width: 140px;
+  background-color: #e0e0e0;
+  border-color: #9E9E9E;
+  opacity: 0.8;
+  position: absolute;
+}
+
+.lock-icon {
+  background-color: #9E9E9E;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px auto 0;
+}
+
+.lock-icon i {
+  color: white;
+}
+
+/* Branch connectors using positioning */
+.branches {
+  position: relative;
+}
+
+.branch {
+  position: absolute;
+}
+
+/* Integration Techniques positioning */
+.integration-branch {
+  top: -150px;
+  left: -320px;
+}
+
+/* Differential Equations positioning */
+.differential-branch {
+  top: 50px;
+  left: -320px;
+}
+
+/* Series positioning */
+.series-branch {
+  top: 200px;
+  left: -250px;
+}
+
+/* Integrals positioning */
+.integrals-branch {
+  top: 200px;
+  right: -250px;
+}
+
+/* Concept node positioning */
+/* Limits section */
+.one-sided {
+  top: -70px;
+  left: -80px;
+}
+
+.infinite-limits {
+  top: -110px;
+  left: 30px;
+}
+
+.limits-infinity {
+  top: -70px;
+  right: -80px;
+}
+
+/* Continuity section */
+.removable {
+  top: -70px;
+  right: -50px;
+}
+
+.jump {
+  top: -10px;
+  right: -100px;
+}
+
+.infinite {
+  top: 50px;
+  right: -50px;
+}
+
+/* Derivative rules section */
+.power-rule {
+  top: -70px;
+  right: -110px;
+}
+
+.product-rule {
+  top: -10px;
+  right: -110px;
+}
+
+.chain-rule {
+  top: 50px;
+  right: -110px;
+}
+
+/* Lines connecting nodes (using pseudo-elements) */
+.branch::before,
+.sub-branch::before,
+.concept-branches::before {
+  content: '';
+  position: absolute;
+  background-color: #4CAF50;
+  z-index: -1;
+}
+
+/* Horizontal branch lines */
+.limits-branch::before {
+  width: 100px;
+  height: 2px;
+  top: 50%;
+  left: -100px;
+}
+
+.derivatives-branch::before {
+  width: 100px;
+  height: 2px;
+  top: 50%;
+  right: -100px;
+}
+
+.integration-branch::before,
+.differential-branch::before,
+.series-branch::before,
+.integrals-branch::before {
+  width: 70px;
+  height: 2px;
+  top: 50%;
+}
+
+.integration-branch::before,
+.differential-branch::before,
+.series-branch::before {
+  right: -70px;
+}
+
+.integrals-branch::before {
+  left: -70px;
+}
+
+/* Vertical sub-branch lines */
+.limits-sub::before,
+.derivatives-sub::before {
+  width: 2px;
+  height: 80px;
+  left: 50%;
+}
+
+.concept-branches::before {
+  width: 2px;
+  height: 150px;
+  left: 50%;
+  top: -50px;
+}
+
+/* Additional styling */
+/* Override for specific connections */
+.sub-branches, .concept-branches {
+  position: relative;
+}
+
+/* Add specific line connections for sub-branches */
+.limits-sub::after,
+.derivatives-sub::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 50px;
+  background-color: #4CAF50;
+  left: 50%;
+  bottom: 100%;
+  z-index: -1;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 1200px) {
+  .root-node {
+    position: relative;
+    top: 0;
+    left: 0;
+    transform: none;
+    margin: 20px auto;
+  }
+  
+  .topic-node, .subtopic-node, .concept-node, .locked-node {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    margin: 20px auto;
+  }
+  
+  .branch, .sub-branch {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+  }
+  
+  .branches {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .concept-branches {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
