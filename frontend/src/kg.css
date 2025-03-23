@@ -1,4 +1,4 @@
-/* Mind Map Styles with SVG-based Connections */
+/* kg.css */
 * {
   margin: 0;
   padding: 0;
@@ -6,21 +6,13 @@
   font-family: 'Arial', sans-serif;
 }
 
-body {
-  background-color: #f5f5f5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 20px;
-  overflow: hidden;
-}
-
 .mind-map-app {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100vh;
-  position: relative;
   overflow: hidden;
+  position: relative;
 }
 
 .mind-map-container {
@@ -28,37 +20,18 @@ body {
   height: 100vh;
   position: relative;
   overflow: hidden;
-  cursor: grab;
-}
-
-.mind-map-container.dragging {
-  cursor: grabbing;
 }
 
 .mind-map {
   width: 2400px;
   height: 1600px;
   position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   transform-origin: center center;
 }
 
-/* SVG connection layer */
-.connections-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.connector-line {
-  stroke-linecap: round;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
-}
-
-/* Node styling */
 .node {
   position: absolute;
   background-color: #e0e0e0;
@@ -73,7 +46,7 @@ body {
   justify-content: center;
   align-items: center;
   cursor: grab;
-  z-index: 3;
+  position: relative;
 }
 
 .node:hover {
@@ -84,7 +57,7 @@ body {
 
 .node.dragging {
   cursor: grabbing;
-  opacity: 0.9;
+  opacity: 0.8;
   z-index: 100;
 }
 
@@ -93,10 +66,10 @@ body {
   height: 140px;
   font-size: 24px;
   font-weight: bold;
+  z-index: 5;
   background-color: #e8f5e9;
-  border: 3px solid #4caf50;
-  z-index: 10;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  border: 3px solid #2e7d32;
+  box-shadow: 0 0 20px rgba(0, 100, 0, 0.3);
 }
 
 .node.directory {
@@ -104,6 +77,7 @@ body {
   height: 100px;
   font-size: 18px;
   font-weight: bold;
+  z-index: 4;
   background-color: #f0f7f0;
 }
 
@@ -111,6 +85,7 @@ body {
   width: 150px;
   height: 80px;
   font-size: 14px;
+  z-index: 3;
 }
 
 .node.expanded {
@@ -128,6 +103,17 @@ body {
   width: 90%;
   border-bottom: 1px solid #4caf50;
   outline: none;
+  margin-bottom: 5px;
+}
+
+.node.root .title-input {
+  font-weight: bold;
+  font-size: 24px;
+  border-bottom: 2px solid #2e7d32;
+}
+
+.node-title {
+  font-weight: inherit;
   margin-bottom: 5px;
 }
 
@@ -149,33 +135,18 @@ body {
   z-index: 6;
 }
 
-.delete-button {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  width: 25px;
-  height: 25px;
-  background-color: #f44336;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 16px;
-  cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  z-index: 6;
+.node.root .add-button {
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
+  background-color: #2e7d32;
 }
 
 .add-button:hover {
   background-color: #388e3c;
 }
 
-.delete-button:hover {
-  background-color: #d32f2f;
-}
-
-.progress {
+.score {
   margin-top: 5px;
   padding: 2px 8px;
   border-radius: 10px;
@@ -267,6 +238,15 @@ body {
   cursor: pointer;
 }
 
+.connector {
+  position: absolute;
+  background-color: #4caf50;
+  height: 2px;
+  transform-origin: 0 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
 .controls {
   position: fixed;
   bottom: 20px;
@@ -312,7 +292,8 @@ body {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1100;
+  z-index: 1000;
+  display: flex;
   justify-content: center;
   align-items: center;
 }
@@ -324,8 +305,6 @@ body {
   border-radius: 10px;
   width: 400px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  position: relative;
-  z-index: 1200;
 }
 
 .form-group {
@@ -372,4 +351,11 @@ body {
 .form-actions button:last-child {
   background-color: #f44336;
   color: white;
+}
+
+.no-questions {
+  font-style: italic;
+  color: #777;
+  margin-bottom: 10px;
+  font-size: 12px;
 }

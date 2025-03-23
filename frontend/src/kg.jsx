@@ -1,1413 +1,589 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faCheck, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-const MindMap = () => {
-  // State for the mind map data
-  const [mindMapData, setMindMapData] = useState({
-    nodes: {},
-    connections: []
-  });
-  
-  // Refs
-  const mindMapRef = useRef(null);
-  const nodeNameInputRef = useRef(null);
-  const questionTextInputRef = useRef(null);
-  
-  // State for node form
-  const [nodeFormVisible, setNodeFormVisible] = useState(false);
-  const [nodeName, setNodeName] = useState('');
-  const [nodeType, setNodeType] = useState('directory');
-  const [parentId, setParentId] = useState(null);
-  
-  // State for question form
-  const [questionFormVisible, setQuestionFormVisible] = useState(false);
-  const [questionText, setQuestionText] = useState('');
-  const [currentNodeId, setCurrentNodeId] = useState(null);
-  
-  // State for zoom
-  const [currentScale, setCurrentScale] = useState(1);
-  
-  // Completely rewritten connector function with pixel-perfect accuracy
-const createConnector = (fromId, toId) => {
-  // Get DOM elements
-  const fromNode = document.getElementById(fromId);
-  const toNode = document.getElementById(toId);
-  
-  if (!fromNode || !toNode) return;
-  
-  // Get actual node positions in the document
-  const fromRect = fromNode.getBoundingClientRect();
-  const toRect = toNode.getBoundingClientRect();
-  const containerRect = mindMapRef.current.getBoundingClientRect();
-  
-  // Calculate center points relative to container
-  const fromCenterX = fromRect.left + (fromRect.width / 2) - containerRect.left;
-  const fromCenterY = fromRect.top + (fromRect.height / 2) - containerRect.top;
-  const toCenterX = toRect.left + (toRect.width / 2) - containerRect.left;
-  const toCenterY = toRect.top + (toRect.height / 2) - containerRect.top;
-  
-  // Calculate connector properties
-  const dx = toCenterX - fromCenterX;
-  const dy = toCenterY - fromCenterY;
-  const distance = Math.sqrt(dx * dx + dy * dy);
-  const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-  
-  // Create connector element
-  const connector = document.createElement('div');
-  connector.className = 'connector';
-  connector.style.width = `${distance}px`;
-  connector.style.left = `${fromCenterX}px`;
-  connector.style.top = `${fromCenterY}px`;
-  connector.style.transform = `rotate(${angle}deg)`;
-  
-  mindMapRef.current.appendChild(connector);
-};
-  
-  // Improved drawConnectors function with better verification
-  const drawConnectors = useCallback(() => {
-    if (!mindMapRef.current) return;
+const MultivariableCalculusTree = () => {
+  // State for nodes and their connections
+  const [nodes, setNodes] = useState([]);
+  const [selectedNode, setSelectedNode] = useState(null);
+  const svgRef = useRef(null);
+  const treeContainerRef = useRef(null);
+
+  // Create the initial tree structure with Multivariable Calculus data
+  useEffect(() => {
+    if (nodes.length === 0) {
+      const initialNodes = [];
+
+      // Root node (leftmost)
+      const rootNode = {
+        id: 'root',
+        type: 'root',
+        name: 'Math 211 - Multivariable Calculus',
+        x: 150,
+        y: 200,
+        children: ['section-a', 'section-b', 'section-c', 'section-d'],
+        expanded: false,
+        questions: [],
+        progress: { correct: 5, total: 21 } // Representing approx 1/4 completion
+      };
+      initialNodes.push(rootNode);
+
+      // Main sections (middle column)
+      const sectionA = {
+        id: 'section-a',
+        type: 'directory',
+        name: 'A. Vectors and Parameterization',
+        x: 400,
+        y: 100,
+        parentId: 'root',
+        children: ['topic-a1', 'topic-a2', 'topic-a3', 'topic-a4', 'topic-a5'],
+        expanded: false,
+        questions: [],
+        progress: { correct: 5, total: 5 } // Fully completed section
+      };
+      initialNodes.push(sectionA);
+
+      const sectionB = {
+        id: 'section-b',
+        type: 'directory',
+        name: 'B. Differentiation',
+        x: 400,
+        y: 250,
+        parentId: 'root',
+        children: ['topic-b1', 'topic-b2', 'topic-b3', 'topic-b4', 'topic-b5', 'topic-b6', 'topic-b7', 'topic-b8'],
+        expanded: false,
+        questions: [],
+        progress: { correct: 0, total: 8 } // No completed topics in this section
+      };
+      initialNodes.push(sectionB);
+
+      const sectionC = {
+        id: 'section-c',
+        type: 'directory',
+        name: 'C. Multiple Integrals',
+        x: 400,
+        y: 350,
+        parentId: 'root',
+        children: [],
+        expanded: false,
+        questions: [],
+        progress: { correct: 0, total: 5 }, // Locked section
+        locked: true
+      };
+      initialNodes.push(sectionC);
+
+      const sectionD = {
+        id: 'section-d',
+        type: 'directory',
+        name: 'D. Vector Calculus',
+        x: 400,
+        y: 450,
+        parentId: 'root',
+        children: [],
+        expanded: false,
+        questions: [],
+        progress: { correct: 0, total: 6 }, // Locked section
+        locked: true
+      };
+      initialNodes.push(sectionD);
+
+      // Topics for Section A (reduced to match 1/4 coverage)
+      // Only showing first 2 topics as fully completed
+      const topicA1 = {
+        id: 'topic-a1',
+        type: 'leaf',
+        name: 'A.1 Multivariable Functions',
+        x: 650,
+        y: 60,
+        parentId: 'section-a',
+        children: [],
+        expanded: false,
+        questions: [
+          { id: 'q-a1-1', text: 'What is the domain of f(x,y) = ln(1-x²-y²)?', correct: true },
+          { id: 'q-a1-2', text: 'Define a multivariable function and give an example.', correct: true },
+          { id: 'q-a1-3', text: 'What is the range of f(x,y) = x² + y²?', correct: true }
+        ],
+        progress: { correct: 3, total: 3 }
+      };
+      initialNodes.push(topicA1);
+
+      const topicA2 = {
+        id: 'topic-a2',
+        type: 'leaf',
+        name: 'A.2 Vector Algebra and Matrices',
+        x: 650,
+        y: 130,
+        parentId: 'section-a',
+        children: [],
+        expanded: false,
+        questions: [
+          { id: 'q-a2-1', text: 'Calculate |3i + 4j - 5k|', correct: true },
+          { id: 'q-a2-2', text: 'Find the matrix product AB if A = [[1,2],[3,4]] and B = [[5,6],[7,8]]', correct: true },
+          { id: 'q-a2-3', text: 'What are the properties of a unit vector?', correct: true }
+        ],
+        progress: { correct: 3, total: 3 }
+      };
+      initialNodes.push(topicA2);
+
+      // The remaining topics in section A are locked
+      const topicA3 = {
+        id: 'topic-a3',
+        type: 'leaf',
+        name: 'A.3 Dot Product and Cross Product',
+        x: 650,
+        y: 200,
+        parentId: 'section-a',
+        children: [],
+        expanded: false,
+        questions: [],
+        progress: { correct: 0, total: 0 },
+        locked: true
+      };
+      initialNodes.push(topicA3);
+
+      const topicA4 = {
+        id: 'topic-a4',
+        type: 'leaf',
+        name: 'A.4 Parameterized Curves',
+        x: 650,
+        y: 270,
+        parentId: 'section-a',
+        children: [],
+        expanded: false,
+        questions: [],
+        progress: { correct: 0, total: 0 },
+        locked: true
+      };
+      initialNodes.push(topicA4);
+
+      const topicA5 = {
+        id: 'topic-a5',
+        type: 'leaf',
+        name: 'A.5 Derivatives and Arc Length',
+        x: 650,
+        y: 340,
+        parentId: 'section-a',
+        children: [],
+        expanded: false,
+        questions: [],
+        progress: { correct: 0, total: 0 },
+        locked: true
+      };
+      initialNodes.push(topicA5);
+
+      // All topics in Section B are now locked
+      const topicB1 = {
+        id: 'topic-b1',
+        type: 'leaf',
+        name: 'B.1 Graphs and Level Sets',
+        x: 650,
+        y: 410,
+        parentId: 'section-b',
+        children: [],
+        expanded: false,
+        questions: [],
+        progress: { correct: 0, total: 0 },
+        locked: true
+      };
+      initialNodes.push(topicB1);
+
+      const topicB2 = {
+        id: 'topic-b2',
+        type: 'leaf',
+        name: 'B.2 Equations of Lines and Planes',
+        x: 650,
+        y: 480,
+        parentId: 'section-b',
+        children: [],
+        expanded: false,
+        questions: [],
+        progress: { correct: 0, total: 0 },
+        locked: true
+      };
+      initialNodes.push(topicB2);
+
+      const topicB3 = {
+        id: 'topic-b3',
+        type: 'leaf',
+        name: 'B.3 Continuity and Limits',
+        x: 650,
+        y: 550,
+        parentId: 'section-b',
+        children: [],
+        expanded: false,
+        questions: [],
+        progress: { correct: 0, total: 0 },
+        locked: true
+      };
+      initialNodes.push(topicB3);
+
+      setNodes(initialNodes);
+    }
+  }, [nodes.length]);
+
+  // Helper function to find a node by its ID
+  const findNodeById = (id, nodesList) => {
+    return nodesList.find(node => node.id === id);
+  };
+
+  // Draw connector lines
+  const renderConnections = useCallback(() => {
+    const connections = [];
     
-    // Remove existing connectors
-    const existingConnectors = mindMapRef.current.querySelectorAll('.connector');
-    existingConnectors.forEach(el => el.remove());
-    
-    // Ensure all nodes exist in DOM before attempting to create connections
-    // This helps prevent timing issues where connections are attempted
-    // before nodes are rendered
-    setTimeout(() => {
-      // Create each connector
-      mindMapData.connections.forEach(conn => {
-        // Verify both nodes exist before attempting to draw connector
-        const fromExists = document.getElementById(conn.from);
-        const toExists = document.getElementById(conn.to);
-        
-        if (fromExists && toExists) {
-          createConnector(conn.from, conn.to);
-        }
-      });
-    }, 0);
-  }, [mindMapData.connections, createConnector]);
-  
-  // Memoize the collapseAllNodes function - must be defined before it's used
-  const collapseAllNodes = useCallback(() => {
-    const expandedNodes = document.querySelectorAll('.node.expanded');
-    expandedNodes.forEach(node => {
-      node.classList.remove('expanded');
-      const questionsList = node.querySelector('.questions-list');
-      if (questionsList) {
-        questionsList.classList.remove('visible');
-      }
-    });
-  }, []);
-  
-  // Initialize the mind map with a root node
-  useEffect(() => {
-    createRootNode();
-    
-    // Center the mind map in the viewport
-    if (mindMapRef.current) {
-      const mindMap = mindMapRef.current;
-      const container = mindMap.parentElement;
-      
-      // Calculate the center offsets
-      mindMap.style.top = '0';
-      mindMap.style.left = '0';
-    }
-  }, []);
-  
-  // Focus input field when node form becomes visible
-  useEffect(() => {
-    if (nodeFormVisible && nodeNameInputRef.current) {
-      setTimeout(() => {
-        nodeNameInputRef.current.focus();
-      }, 50);
-    }
-  }, [nodeFormVisible]);
-  
-  // Focus input field when question form becomes visible
-  useEffect(() => {
-    if (questionFormVisible && questionTextInputRef.current) {
-      setTimeout(() => {
-        questionTextInputRef.current.focus();
-      }, 50);
-    }
-  }, [questionFormVisible]);
-  
-  // Update connectors when nodes or connections change
-  useEffect(() => {
-    if (Object.keys(mindMapData.nodes).length > 0) {
-      // Delay slightly to ensure nodes are rendered in DOM
-      const timer = setTimeout(() => {
-        drawConnectors();
-      }, 50);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [mindMapData.nodes, mindMapData.connections, drawConnectors]);
-  
-  // Function to create the initial root node (simplified)
-  const createRootNode = () => {
-    // Create root node data with a centered position
-    setMindMapData({
-      nodes: {
-        root: {
-          id: 'root',
-          title: 'Root Node', // Default title
-          type: 'root',
-          children: [],
-          depth: 0,
-          position: { 
-            top: 800, // Center vertical position
-            left: 1200 // Center horizontal position
+    nodes.forEach(node => {
+      if (node.children && node.children.length > 0) {
+        node.children.forEach(childId => {
+          const childNode = findNodeById(childId, nodes);
+          if (childNode) {
+            connections.push(
+              <line
+                key={`${node.id}-${childId}`}
+                x1={node.x}
+                y1={node.y}
+                x2={childNode.x}
+                y2={childNode.y}
+                stroke="#2a9d8f"
+                strokeWidth="2"
+              />
+            );
           }
-        }
-      },
-      connections: []
+        });
+      }
     });
-  };
-  
-  // Function to show the node form
-  const showNodeForm = (pId) => {
-    setParentId(pId);
-    setNodeName('');
-    setNodeType('directory');
-    setNodeFormVisible(true);
-  };
-  
-  // Function to hide the node form
-  const hideNodeForm = () => {
-    setNodeFormVisible(false);
-  };
-  
-  // Function to save the node form
-  const saveNodeForm = () => {
-    if (nodeName.trim()) {
-      // Create new node
-      createNode(parentId, nodeName.trim(), nodeType);
-      
-      // Hide form
-      hideNodeForm();
-      
-      // Update node scores
-      updateNodeScores();
-    }
-  };
-  
-  // Handle form key events
-  const handleNodeFormKeyDown = (e) => {
-    e.stopPropagation();
-    if (e.key === 'Enter') {
-      saveNodeForm();
-    } else if (e.key === 'Escape') {
-      hideNodeForm();
-    }
-  };
-  
-  // Improved node creation with precise positioning
-  const createNode = (parentId, title, type) => {
-    if (!mindMapData.nodes[parentId]) {
-      console.error("Cannot create node: parent does not exist");
-      return;
-    }
     
-    const parent = mindMapData.nodes[parentId];
-    const nodeId = `node_${Date.now()}`;
-    const nodeDepth = parent.depth + 1;
+    return connections;
+  }, [nodes]);
+
+  // Toggle node expansion
+  const toggleNodeExpansion = (nodeId) => {
+    setNodes(prevNodes => 
+      prevNodes.map(node => 
+        node.id === nodeId && !node.locked ? { ...node, expanded: !node.expanded } : node
+      )
+    );
+    setSelectedNode(nodeId);
+  };
+
+  // Calculate the percentage for progress display
+  const calculatePercentage = (correct, total) => {
+    if (total === 0) return 0;
+    return Math.round((correct / total) * 100);
+  };
+
+  // Get color based on progress percentage
+  const getProgressColor = (correct, total) => {
+    if (total === 0) return '#6c757d'; // Gray for no progress
     
-    // Calculate exact vertical offset based on node type
-    const verticalOffset = 200; // Increased for better visibility
+    const percentage = (correct / total) * 100;
     
-    // Calculate horizontal positioning
-    const childCount = parent.children ? parent.children.length : 0;
-    let offsetX = 0;
-    
-    if (childCount === 0) {
-      offsetX = 0; // First child directly below parent
-    } else {
-      const horizontalSpacing = 250; // Wider spacing
-      // Calculate total width needed for all children including this one
-      const childrenCount = childCount + 1;
-      // For an odd number of children, center them; for even, offset slightly
-      const totalWidth = horizontalSpacing * (childrenCount - 1);
-      // Start from the far left position
-      const startX = -totalWidth / 2;
-      // Place this child at its position in the row
-      offsetX = startX + (childCount * horizontalSpacing);
-    }
-    
-    // Update the state atomically
-    setMindMapData(prevData => {
-      const newData = {
-        nodes: {
-          ...prevData.nodes,
-          [nodeId]: {
-            id: nodeId,
-            title: title,
-            type: type,
-            parent: parentId,
-            depth: nodeDepth,
-            children: [],
-            questions: [],
-            position: {
-              // Precise positioning
-              top: parent.position.top + verticalOffset,
-              left: parent.position.left + offsetX
-            }
-          }
-        },
-        connections: [
-          ...prevData.connections
-        ]
-      };
-      
-      // Update parent's children array
-      newData.nodes[parentId] = {
-        ...prevData.nodes[parentId],
-        children: [...(prevData.nodes[parentId].children || []), nodeId]
-      };
-      
-      // Add the connection
-      newData.connections.push({
-        from: parentId,
-        to: nodeId
+    if (percentage < 30) return '#d62828'; // Red
+    if (percentage < 60) return '#f77f00'; // Orange
+    if (percentage < 85) return '#fcbf49'; // Yellow
+    return '#38b000'; // Green
+  };
+
+  // Mark a question as correct or incorrect
+  const markQuestion = (nodeId, questionId, isCorrect) => {
+    setNodes(prevNodes => {
+      // First update the specific question
+      const updatedNodes = prevNodes.map(node => {
+        if (node.id === nodeId) {
+          const updatedQuestions = node.questions.map(q => 
+            q.id === questionId ? { ...q, correct: isCorrect } : q
+          );
+          
+          const correct = updatedQuestions.filter(q => q.correct === true).length;
+          const total = updatedQuestions.length;
+          
+          return { 
+            ...node, 
+            questions: updatedQuestions,
+            progress: { correct, total }
+          };
+        }
+        return node;
       });
       
-      return newData;
-    });
-    
-    // Force redraw of connectors after a short delay
-    setTimeout(() => {
-      drawConnectors();
-    }, 100);
-  };
-  
-  // Function to delete a node
-  const deleteNode = (nodeId) => {
-    if (nodeId === 'root') return; // Prevent deleting root node
-    
-    setMindMapData(prevData => {
-      const newData = JSON.parse(JSON.stringify(prevData));
-      
-      // Get the node to delete
-      const nodeToDelete = newData.nodes[nodeId];
-      if (!nodeToDelete) return newData;
-      
-      // Get the parent node
-      const parentId = nodeToDelete.parent;
-      const parentNode = newData.nodes[parentId];
-      
-      // Remove node from parent's children array
-      if (parentNode && parentNode.children) {
-        parentNode.children = parentNode.children.filter(id => id !== nodeId);
-      }
-      
-      // Function to recursively collect all descendant node IDs
-      const collectDescendants = (nodeId) => {
-        const descendants = [];
-        const node = newData.nodes[nodeId];
+      // Then update all parent nodes recursively
+      const updateParentProgress = (nodesList, childId) => {
+        const childNode = nodesList.find(n => n.id === childId);
+        if (!childNode || !childNode.parentId) return nodesList;
         
-        if (!node) return descendants;
+        const parentNode = nodesList.find(n => n.id === childNode.parentId);
+        if (!parentNode) return nodesList;
         
-        descendants.push(nodeId);
-        
-        if (node.children && node.children.length > 0) {
-          node.children.forEach(childId => {
-            descendants.push(...collectDescendants(childId));
-          });
-        }
-        
-        return descendants;
-      };
-      
-      // Get all descendant nodes
-      const nodesToDelete = collectDescendants(nodeId);
-      
-      // Remove all descendants from nodes object
-      nodesToDelete.forEach(id => {
-        delete newData.nodes[id];
-      });
-      
-      // Remove connections involving deleted nodes
-      newData.connections = newData.connections.filter(conn => 
-        !nodesToDelete.includes(conn.from) && !nodesToDelete.includes(conn.to)
-      );
-      
-      return newData;
-    });
-    
-    // Update scores after deletion
-    updateNodeScores();
-  };
-  
-  // Function to toggle questions display for leaf nodes
-  const toggleQuestionsDisplay = (nodeId) => {
-    const node = document.getElementById(nodeId);
-    const questionsList = node.querySelector('.questions-list');
-    
-    if (questionsList.classList.contains('visible')) {
-      // Collapse
-      questionsList.classList.remove('visible');
-      node.classList.remove('expanded');
-    } else {
-      // Expand
-      collapseAllNodes();
-      questionsList.classList.add('visible');
-      node.classList.add('expanded');
-    }
-  };
-  
-  // Show question form
-  const showQuestionForm = (nodeId) => {
-    setCurrentNodeId(nodeId);
-    setQuestionText('');
-    setQuestionFormVisible(true);
-  };
-  
-  // Hide question form
-  const hideQuestionForm = () => {
-    setQuestionFormVisible(false);
-  };
-  
-  // Save question form
-  const saveQuestionForm = () => {
-    if (questionText.trim()) {
-      // Add question to the node
-      addQuestion(currentNodeId, questionText.trim());
-      
-      // Hide form
-      hideQuestionForm();
-      
-      // Update scores
-      updateNodeScores();
-    }
-  };
-  
-  // Handle question form key events
-  const handleQuestionFormKeyDown = (e) => {
-    e.stopPropagation();
-    if (e.key === 'Enter') {
-      saveQuestionForm();
-    } else if (e.key === 'Escape') {
-      hideQuestionForm();
-    }
-  };
-  
-  // Add question to a leaf node
-  const addQuestion = (nodeId, questionText) => {
-    setMindMapData(prevData => {
-      const newData = JSON.parse(JSON.stringify(prevData));
-      const node = newData.nodes[nodeId];
-      
-      if (node && node.type === 'leaf') {
-        // Create question object
-        const questionId = `q_${Date.now()}`;
-        const question = {
-          id: questionId,
-          text: questionText,
-          isCorrect: false
-        };
-        
-        // Add to node's questions
-        if (!node.questions) {
-          node.questions = [];
-        }
-        node.questions.push(question);
-      }
-      
-      return newData;
-    });
-  };
-  
-  // Toggle question correct/incorrect
-  const toggleQuestionCorrect = (nodeId, questionId, isCorrect) => {
-    setMindMapData(prevData => {
-      const newData = JSON.parse(JSON.stringify(prevData));
-      const node = newData.nodes[nodeId];
-      
-      if (node && node.questions) {
-        // Find and update the question
-        const question = node.questions.find(q => q.id === questionId);
-        if (question) {
-          question.isCorrect = isCorrect;
-        }
-      }
-      
-      return newData;
-    });
-    
-    // Update scores
-    updateNodeScores();
-  };
-  
-  // Update scores for all directory and root nodes
-  const updateNodeScores = () => {
-    setMindMapData(prevData => {
-      const newData = JSON.parse(JSON.stringify(prevData));
-      
-      // First, calculate scores for each leaf node
-      for (const nodeId in newData.nodes) {
-        const node = newData.nodes[nodeId];
-        if (node.type === 'leaf' && node.questions) {
-          node.correctCount = node.questions.filter(q => q.isCorrect).length;
-          node.totalCount = node.questions.length;
-        }
-      }
-      
-      // Then update directory nodes and root
-      function calculateDirectoryScore(nodeId) {
-        const node = newData.nodes[nodeId];
+        // Calculate total progress across all children
         let totalCorrect = 0;
         let totalQuestions = 0;
         
-        // Get scores from children
-        for (const childId of node.children || []) {
-          const childNode = newData.nodes[childId];
-          
-          if (childNode.type === 'leaf') {
-            totalCorrect += childNode.correctCount || 0;
-            totalQuestions += childNode.totalCount || 0;
-          } else {
-            // Recursively calculate child directory scores
-            const childScore = calculateDirectoryScore(childId);
-            totalCorrect += childScore.correctCount;
-            totalQuestions += childScore.totalCount;
+        parentNode.children.forEach(id => {
+          const child = nodesList.find(n => n.id === id);
+          if (child) {
+            totalCorrect += child.progress.correct;
+            totalQuestions += child.progress.total;
           }
+        });
+        
+        // Update parent's progress
+        const updatedList = nodesList.map(n => 
+          n.id === parentNode.id ? 
+            { ...n, progress: { correct: totalCorrect, total: totalQuestions } } : 
+            n
+        );
+        
+        // Continue up the tree if there are more parents
+        if (parentNode.parentId) {
+          return updateParentProgress(updatedList, parentNode.id);
         }
         
-        // Save the calculated scores in the node
-        node.correctCount = totalCorrect;
-        node.totalCount = totalQuestions;
-        
-        // Return the score for parent calculations
-        return { 
-          correctCount: totalCorrect, 
-          totalCount: totalQuestions 
-        };
-      }
-      
-      // Start calculation from the root
-      if (newData.nodes.root) {
-        calculateDirectoryScore('root');
-      }
-      
-      return newData;
-    });
-  };
-  
-  // Memoize the makeNodeDraggable function
-  const makeNodeDraggable = useCallback((nodeId) => {
-    const nodeRef = document.getElementById(nodeId);
-    if (!nodeRef) return;
-    
-    let startX, startY;
-    let startTop, startLeft;
-    let isDragging = false;
-    
-    const dragStart = (e) => {
-      if (e.target.closest('.add-button') || 
-          e.target.closest('.delete-button') ||
-          e.target.closest('.questions-list') ||
-          e.target.closest('.add-question-btn') ||
-          e.target.closest('.title-input')) {
-        return;
-      }
-      
-      e.stopPropagation();
-      e.preventDefault();
-      
-      isDragging = true;
-      nodeRef.classList.add('dragging');
-      
-      startX = e.clientX;
-      startY = e.clientY;
-      startTop = nodeRef.offsetTop;
-      startLeft = nodeRef.offsetLeft;
-      
-      document.addEventListener('mousemove', drag);
-      document.addEventListener('mouseup', dragEnd);
-    };
-    
-    const drag = (e) => {
-      if (!isDragging) return;
-      
-      e.preventDefault();
-      
-      const deltaX = e.clientX - startX;
-      const deltaY = e.clientY - startY;
-      
-      const newTop = startTop + deltaY;
-      const newLeft = startLeft + deltaX;
-      
-      nodeRef.style.top = `${newTop}px`;
-      nodeRef.style.left = `${newLeft}px`;
-      
-      setMindMapData(prevData => {
-        const newData = {...prevData};
-        if (newData.nodes[nodeId]) {
-          newData.nodes[nodeId] = {
-            ...newData.nodes[nodeId],
-            position: {
-              top: newTop,
-              left: newLeft
-            }
-          };
-        }
-        return newData;
-      });
-      
-      drawConnectors();
-    };
-    
-    const dragEnd = () => {
-      isDragging = false;
-      nodeRef.classList.remove('dragging');
-      document.removeEventListener('mousemove', drag);
-      document.removeEventListener('mouseup', dragEnd);
-      drawConnectors();
-    };
-    
-    nodeRef.addEventListener('mousedown', dragStart);
-    
-    return () => {
-      nodeRef.removeEventListener('mousedown', dragStart);
-    };
-  }, [drawConnectors]);
-  
-  // After nodes are rendered, make them draggable
-  useEffect(() => {
-    const cleanupFunctions = [];
-    
-    Object.keys(mindMapData.nodes).forEach(nodeId => {
-      const cleanup = makeNodeDraggable(nodeId);
-      if (cleanup) cleanupFunctions.push(cleanup);
-    });
-    
-    // Make the background draggable for panning
-    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    let isDragging = false;
-    
-    const dragMouseDown = (e) => {
-      if (e.target.closest('.node') || 
-          e.target.closest('.node-form') || 
-          e.target.closest('.question-form') ||
-          e.target.closest('.add-button') ||
-          e.target.closest('.delete-button')) return;
-      
-      e.preventDefault();
-      isDragging = true;
-      
-      pos3 = e.clientX;
-      pos4 = e.clientY;
-      
-      document.addEventListener('mousemove', elementDrag);
-      document.addEventListener('mouseup', closeDragElement);
-    };
-    
-    const elementDrag = (e) => {
-      if (!isDragging || !mindMapRef.current) return;
-      
-      e.preventDefault();
-      pos1 = pos3 - e.clientX;
-      pos2 = pos4 - e.clientY;
-      pos3 = e.clientX;
-      pos4 = e.clientY;
-      
-      mindMapRef.current.style.top = (mindMapRef.current.offsetTop - pos2) + "px";
-      mindMapRef.current.style.left = (mindMapRef.current.offsetLeft - pos1) + "px";
-    };
-    
-    const closeDragElement = () => {
-      isDragging = false;
-      document.removeEventListener('mousemove', elementDrag);
-      document.removeEventListener('mouseup', closeDragElement);
-    };
-    
-    if (mindMapRef.current) {
-      mindMapRef.current.addEventListener('mousedown', dragMouseDown);
-    }
-    
-    return () => {
-      cleanupFunctions.forEach(cleanup => cleanup());
-      if (mindMapRef.current) {
-        mindMapRef.current.removeEventListener('mousedown', dragMouseDown);
-      }
-      document.removeEventListener('mousemove', elementDrag);
-      document.removeEventListener('mouseup', closeDragElement);
-    };
-  }, [mindMapData.nodes, makeNodeDraggable]);
-  
-  // Hide expanded node when clicking elsewhere
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (!e.target.closest('.node') && !e.target.closest('.node-form') && !e.target.closest('.question-form')) {
-        collapseAllNodes();
-      }
-    };
-    
-    document.addEventListener('click', handleClickOutside);
-    
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [collapseAllNodes]);
-  
-  // Center the mind map on initial load
-  useEffect(() => {
-    // Center the mind map in the viewport after initial render
-    const centerMindMap = () => {
-      if (mindMapRef.current) {
-        const map = mindMapRef.current;
-        const container = map.parentElement;
-        
-        // Get container dimensions
-        const containerWidth = container.clientWidth;
-        const containerHeight = container.clientHeight;
-        
-        // Center the mind map
-        const mapWidth = 2400;
-        const mapHeight = 1600;
-        
-        // Calculate offsets to center the mind map
-        const offsetX = (containerWidth - mapWidth) / 2;
-        const offsetY = (containerHeight - mapHeight) / 2;
-        
-        // Apply offsets
-        map.style.left = `${offsetX}px`;
-        map.style.top = `${offsetY}px`;
-      }
-    };
-    
-    // Center after a short delay to ensure DOM is fully rendered
-    setTimeout(centerMindMap, 100);
-  }, []);
-  
-  // Zoom In
-  const zoomIn = () => {
-    setCurrentScale(prev => prev + 0.1);
-    collapseAllNodes();
-  };
-  
-  // Zoom Out
-  const zoomOut = () => {
-    setCurrentScale(prev => Math.max(0.5, prev - 0.1));
-    collapseAllNodes();
-  };
-  
-  // Auto Layout
-  const autoLayout = () => {
-    setMindMapData(prevData => {
-      const newData = JSON.parse(JSON.stringify(prevData));
-      
-      // Get root node
-      const rootNode = newData.nodes.root;
-      if (!rootNode) return newData;
-      
-      // Center of the container
-      const containerWidth = 2400;
-      const containerHeight = 1600;
-      const centerX = containerWidth / 2;
-      const centerY = containerHeight / 2;
-      
-      // Update root node position
-      rootNode.position = { top: centerY, left: centerX };
-      
-      // Function to position children in a tree-like structure
-      const positionChildren = (nodeId, level, childIndex, siblingCount, parentPosition) => {
-        const node = newData.nodes[nodeId];
-        if (!node) return;
-        
-        // Constants for layout
-        const levelHeight = 180; // Vertical spacing between levels
-        const siblingWidth = 200; // Horizontal spacing between siblings
-        
-        // Calculate the total width needed for all siblings at this level
-        const totalWidth = siblingWidth * (siblingCount - 1);
-        
-        // Calculate horizontal position
-        let offsetX = 0;
-        if (siblingCount === 1) {
-          offsetX = 0; // Single child directly below parent
-        } else {
-          // Start from the leftmost position
-          const startX = -totalWidth / 2;
-          // Place this child at its position in the row
-          offsetX = startX + (childIndex * siblingWidth);
-        }
-        
-        // Calculate vertical position
-        const offsetY = levelHeight;
-        
-        // Set node position
-        node.position = {
-          top: parentPosition.top + offsetY,
-          left: parentPosition.left + offsetX
-        };
-        
-        // Recursively position children
-        if (node.children && node.children.length > 0) {
-          node.children.forEach((childId, idx) => {
-            positionChildren(
-              childId,
-              level + 1,
-              idx,
-              node.children.length,
-              node.position
-            );
-          });
-        }
+        return updatedList;
       };
       
-      // Position all children starting from the root
-      if (rootNode.children && rootNode.children.length > 0) {
-        rootNode.children.forEach((childId, idx) => {
-          positionChildren(
-            childId,
-            1,
-            idx,
-            rootNode.children.length,
-            rootNode.position
-          );
-        });
-      }
-      
-      return newData;
+      return updateParentProgress(updatedNodes, nodeId);
     });
+  };
+
+  // Render a node based on its type
+  const renderNode = (node) => {
+    // Define node sizes based on type
+    let nodeWidth, nodeHeight;
     
-    // Collapse all nodes when auto-layout
-    collapseAllNodes();
-  };
-  
-  // Prevent form events from bubbling to parent elements
-  const handleFormClick = (e) => {
-    e.stopPropagation();
-  };
-  
-  // Render all nodes
-  const renderNodes = () => {
-    return Object.values(mindMapData.nodes).map(node => {
-      const { id, title, type, position, questions = [] } = node;
-      
-      // Calculate scores for display
-      const totalQuestions = questions.length;
-      const correctQuestions = questions.filter(q => q.isCorrect).length;
-      const scoreValue = totalQuestions > 0 ? Math.round((correctQuestions / totalQuestions) * 100) : 0;
-      const scoreClass = scoreValue >= 80 ? 'high' : (scoreValue >= 60 ? 'medium' : 'low');
-      
-      // For directory and root nodes, calculate progress percentage
-      const progressPercentage = node.totalCount > 0 
-        ? Math.round((node.correctCount / node.totalCount) * 100) 
-        : 0;
-      
-      const progressClass = progressPercentage >= 80 
-        ? 'high' 
-        : (progressPercentage >= 60 ? 'medium' : 'low');
-      
+    if (node.type === 'root') {
+      nodeWidth = 220;
+      nodeHeight = 90;
+    } else if (node.type === 'directory') {
+      nodeWidth = 160;
+      nodeHeight = 70;
+    } else { // leaf
+      nodeWidth = 120;
+      nodeHeight = 60;
+    }
+    
+    const radius = 10;
+    
+    // Base node style
+    const nodeStyle = {
+      position: 'absolute',
+      left: `${node.x - nodeWidth / 2}px`,
+      top: `${node.y - nodeHeight / 2}px`,
+      width: `${nodeWidth}px`,
+      height: `${nodeHeight}px`,
+      borderRadius: `${radius}px`,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#e9ecef',
+      border: `2px solid ${node.locked ? '#aaaaaa' : '#2a9d8f'}`,
+      cursor: node.locked ? 'not-allowed' : 'pointer',
+      boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+      overflow: 'hidden',
+      zIndex: 10,
+      transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+      fontSize: node.type === 'root' ? '16px' : (node.type === 'directory' ? '14px' : '12px'),
+      opacity: node.locked ? 0.7 : 1,
+      padding: '5px'
+    };
+
+    // Add customizations based on node type
+    if (node.type === 'root') {
+      nodeStyle.backgroundColor = '#e0f3f5';
+      nodeStyle.border = '3px solid #2a9d8f';
+      nodeStyle.boxShadow = '0 3px 10px rgba(0,0,0,0.2)';
+      nodeStyle.fontWeight = 'bold';
+    } else if (node.type === 'directory') {
+      nodeStyle.backgroundColor = node.locked ? '#e6e6e6' : '#d8f3dc';
+      nodeStyle.fontWeight = 'bold';
+    } else if (node.type === 'leaf') {
+      nodeStyle.backgroundColor = node.locked ? '#e6e6e6' : '#f1faee';
+    }
+
+    // If the node is expanded, adjust the height to show questions
+    if (node.expanded && node.type === 'leaf' && !node.locked) {
+      const expandedHeight = nodeHeight + (node.questions.length * 35) + 40; // Extra space for add button
+      nodeStyle.height = `${expandedHeight}px`;
+      nodeStyle.top = `${node.y - expandedHeight / 2}px`;
+      nodeStyle.zIndex = 20;
+      nodeStyle.width = '220px'; // Make expanded leaf nodes wider
+      nodeStyle.left = `${node.x - 110}px`; // Center the expanded node
+    }
+
+    const renderNodeContent = () => {
       return (
-        <div
-          key={id}
-          id={id}
-          className={`node ${type}`}
-          style={{
-            top: `${position.top}px`,
-            left: `${position.left}px`
-          }}
-        >
-          {type === 'root' ? (
-            <input
-              type="text"
-              className="title-input"
-              placeholder="Enter root node name"
-              defaultValue={title}
-              onBlur={(e) => {
-                setMindMapData(prevData => {
-                  const newData = {...prevData};
-                  newData.nodes[id].title = e.target.value;
-                  return newData;
-                });
-              }}
-            />
-          ) : (
-            <div className="node-title">{title}</div>
-          )}
+        <>
+          {/* Node Title */}
+          <div 
+            style={{ 
+              fontWeight: 'inherit', 
+              marginBottom: '5px',
+              padding: '0 5px',
+              textAlign: 'center',
+              fontSize: node.type === 'root' ? '16px' : (node.type === 'directory' ? '14px' : '12px')
+            }}
+          >
+            {node.locked && <span style={{ marginRight: '5px' }}>🔒</span>}
+            <span>{node.name}</span>
+          </div>
           
-          {/* For root and directory nodes: show progress percentage */}
-          {(type === 'directory' || type === 'root') && (
-            <div 
-              className={`progress ${progressClass}`} 
-              style={{ display: node.totalCount > 0 ? 'block' : 'none' }}
-            >
-              {progressPercentage}%
+          {/* Progress Display */}
+          {!node.locked && (
+            <div style={{ 
+              backgroundColor: getProgressColor(node.progress.correct, node.progress.total),
+              padding: '2px 8px',
+              borderRadius: '10px',
+              fontSize: node.type === 'root' ? '14px' : '12px',
+              color: '#fff',
+              marginTop: '4px'
+            }}>
+              {node.type === 'leaf' ? 
+                `${node.progress.correct}/${node.progress.total}` : 
+                `${calculatePercentage(node.progress.correct, node.progress.total)}%`
+              }
             </div>
           )}
           
-          {/* For leaf nodes: show fraction of correct answers */}
-          {type === 'leaf' && (
-            <div 
-              className="fraction" 
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleQuestionsDisplay(id);
-              }}
-            >
-              {correctQuestions}/{totalQuestions}
-            </div>
-          )}
-          
-          {/* Add button for directory and root nodes only */}
-          {(type === 'directory' || type === 'root') && (
-            <div 
-              className="add-button"
-              onClick={(e) => {
-                e.stopPropagation();
-                showNodeForm(id);
-              }}
-            >
-              <FontAwesomeIcon icon={faPlus} />
-            </div>
-          )}
-          
-          {/* Delete button for all nodes except root */}
-          {type !== 'root' && (
-            <div 
-              className="delete-button"
-              onClick={(e) => {
-                e.stopPropagation();
-                deleteNode(id);
-              }}
-            >
-              <FontAwesomeIcon icon={faTrash} />
-            </div>
-          )}
-          
-          {/* Questions list for leaf nodes */}
-          {type === 'leaf' && (
-            <div className="questions-list">
-              {questions.length === 0 ? (
-                <div className="no-questions">No questions added</div>
+          {/* Expanded Leaf Node Questions */}
+          {node.expanded && node.type === 'leaf' && !node.locked && (
+            <div style={{ 
+              marginTop: '10px', 
+              width: '100%', 
+              padding: '0 10px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}>
+              {node.questions.length === 0 ? (
+                <div style={{ fontStyle: 'italic', color: '#999', fontSize: '11px', marginBottom: '10px' }}>
+                  No questions added
+                </div>
               ) : (
-                questions.map(question => (
-                  <div key={question.id} className="question-item" data-id={question.id}>
-                    <div className="question-text">{question.text}</div>
-                    <div className="question-actions">
+                node.questions.map(q => (
+                  <div key={q.id} style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    width: '100%',
+                    marginBottom: '5px',
+                    padding: '5px',
+                    backgroundColor: 'rgba(255,255,255,0.5)',
+                    borderRadius: '5px',
+                    fontSize: '11px'
+                  }}>
+                    <div style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {q.text}
+                    </div>
+                    <div style={{ display: 'flex', gap: '4px' }}>
                       <button 
-                        className="correct-btn" 
-                        title="Mark as correct"
-                        style={{ opacity: question.isCorrect ? 1 : 0.5 }}
                         onClick={(e) => {
                           e.stopPropagation();
-                          toggleQuestionCorrect(id, question.id, true);
+                          markQuestion(node.id, q.id, true);
+                        }}
+                        style={{
+                          backgroundColor: q.correct === true ? '#38b000' : '#ccc',
+                          width: '20px',
+                          height: '20px',
+                          borderRadius: '50%',
+                          border: 'none',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          fontSize: '12px',
+                          color: 'white'
                         }}
                       >
-                        <FontAwesomeIcon icon={faCheck} />
+                        ✓
                       </button>
                       <button 
-                        className="wrong-btn" 
-                        title="Mark as wrong"
-                        style={{ opacity: question.isCorrect ? 0.5 : 1 }}
                         onClick={(e) => {
                           e.stopPropagation();
-                          toggleQuestionCorrect(id, question.id, false);
+                          markQuestion(node.id, q.id, false);
+                        }}
+                        style={{
+                          backgroundColor: q.correct === false ? '#d62828' : '#ccc',
+                          width: '20px',
+                          height: '20px',
+                          borderRadius: '50%',
+                          border: 'none',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          fontSize: '12px',
+                          color: 'white'
                         }}
                       >
-                        <FontAwesomeIcon icon={faTimes} />
+                        ✗
                       </button>
                     </div>
                   </div>
                 ))
               )}
-              <button 
-                className="add-question-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  showQuestionForm(id);
-                }}
-              >
-                Add Question
-              </button>
             </div>
           )}
-        </div>
+        </>
       );
-    });
+    };
+
+    return (
+      <div
+        key={node.id}
+        style={nodeStyle}
+        onClick={() => toggleNodeExpansion(node.id)}
+        className={`knowledge-node ${node.type} ${node.expanded ? 'expanded' : ''} ${node.locked ? 'locked' : ''}`}
+      >
+        {renderNodeContent()}
+      </div>
+    );
   };
-  
+
   return (
-    <div className="mind-map-app">
-      <div className="status">
-        Drag any node to reposition it. Click the Auto-Layout button to organize your mind map.
-      </div>
-      
-      <div className="mind-map-container">
-        <div 
-          className="mind-map"
-          ref={mindMapRef}
-          style={{ transform: `scale(${currentScale})` }}
+    <div className="knowledge-tree-container" style={{ width: '100%', height: '100vh', position: 'relative', overflow: 'hidden', background: '#f5f5f5' }}>
+      <div ref={treeContainerRef} style={{ width: '100%', height: '100%', position: 'relative' }}>
+        {/* SVG for connection lines */}
+        <svg 
+          ref={svgRef}
+          style={{ 
+            position: 'absolute', 
+            top: 0, 
+            left: 0, 
+            width: '100%', 
+            height: '100%',
+            zIndex: 1
+          }}
         >
-          {renderNodes()}
-          {/* Connectors will be added dynamically */}
+          {renderConnections()}
+        </svg>
+        
+        {/* Render nodes */}
+        <div style={{ position: 'relative', width: '100%', height: '100%', zIndex: 2 }}>
+          {nodes.map(node => renderNode(node))}
         </div>
       </div>
       
-      {/* Node Form */}
-      {nodeFormVisible && (
-        <div 
-          className="node-form-overlay" 
-          style={{ display: 'flex' }}
-          onClick={hideNodeForm}
-        >
-          <div 
-            className="node-form"
-            onClick={handleFormClick} // Prevent click from closing the form
-          >
-            <h3>Add New Node</h3>
-            <div className="form-group">
-              <label htmlFor="nodeName">Node Name:</label>
-              <input 
-                type="text" 
-                id="nodeName" 
-                placeholder="Enter node name"
-                value={nodeName}
-                onChange={(e) => setNodeName(e.target.value)}
-                onKeyDown={handleNodeFormKeyDown}
-                ref={nodeNameInputRef}
-                autoFocus
-              />
-            </div>
-            <div className="form-group">
-              <label>Node Type:</label>
-              <div className="radio-group">
-                <label>
-                  <input 
-                    type="radio" 
-                    name="nodeType" 
-                    value="directory" 
-                    checked={nodeType === 'directory'}
-                    onChange={() => setNodeType('directory')}
-                  /> 
-                  Directory
-                </label>
-                <label>
-                  <input 
-                    type="radio" 
-                    name="nodeType" 
-                    value="leaf" 
-                    checked={nodeType === 'leaf'}
-                    onChange={() => setNodeType('leaf')}
-                  /> 
-                  Leaf
-                </label>
-              </div>
-            </div>
-            <div className="form-actions">
-              <button onClick={saveNodeForm}>Save</button>
-              <button onClick={hideNodeForm}>Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {/* Question Form */}
-      {questionFormVisible && (
-        <div 
-          className="question-form-overlay" 
-          style={{ display: 'flex' }}
-          onClick={hideQuestionForm}
-        >
-          <div 
-            className="question-form"
-            onClick={handleFormClick} // Prevent click from closing the form
-          >
-            <h3>Add New Question</h3>
-            <div className="form-group">
-              <label htmlFor="questionText">Question:</label>
-              <input 
-                type="text" 
-                id="questionText" 
-                placeholder="Enter question text"
-                value={questionText}
-                onChange={(e) => setQuestionText(e.target.value)}
-                onKeyDown={handleQuestionFormKeyDown}
-                ref={questionTextInputRef}
-                autoFocus
-              />
-            </div>
-            <div className="form-actions">
-              <button onClick={saveQuestionForm}>Save</button>
-              <button onClick={hideQuestionForm}>Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {/* Controls */}
-      <div className="controls">
-        <button onClick={zoomIn}>Zoom In</button>
-        <button onClick={zoomOut}>Zoom Out</button>
-        <button onClick={autoLayout}>Auto-Layout</button>
+      <div style={{ position: 'absolute', bottom: '20px', left: '20px', backgroundColor: 'white', padding: '10px', borderRadius: '5px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
+        <p style={{ fontSize: '14px', marginBottom: '5px' }}><strong>Legend:</strong></p>
+        <p style={{ fontSize: '12px', margin: '2px 0' }}>🔒 Locked (not yet covered in class)</p>
+        <p style={{ fontSize: '12px', margin: '2px 0' }}><span style={{ backgroundColor: '#38b000', color: 'white', padding: '1px 4px', borderRadius: '3px' }}>85-100%</span> - Mastered</p>
+        <p style={{ fontSize: '12px', margin: '2px 0' }}><span style={{ backgroundColor: '#fcbf49', color: 'white', padding: '1px 4px', borderRadius: '3px' }}>60-84%</span> - Learning</p>
+        <p style={{ fontSize: '12px', margin: '2px 0' }}><span style={{ backgroundColor: '#f77f00', color: 'white', padding: '1px 4px', borderRadius: '3px' }}>30-59%</span> - Needs Work</p>
+        <p style={{ fontSize: '12px', margin: '2px 0' }}><span style={{ backgroundColor: '#d62828', color: 'white', padding: '1px 4px', borderRadius: '3px' }}>0-29%</span> - Not Started</p>
       </div>
       
       <style jsx>{`
-        /* Mind Map Styles */
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-          font-family: 'Arial', sans-serif;
-        }
-        
-        .mind-map-app {
-          background-color: #f5f5f5;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          min-height: 100vh;
-          padding: 20px;
-          overflow: hidden;
-          position: relative;
-        }
-        
-        .mind-map-container {
-          width: 100%;
-          height: 100vh;
-          position: relative;
-          overflow: hidden;
-        }
-        
-        .mind-map {
-          width: 2400px;
-          height: 1600px;
-          position: relative;
-          margin: 0 auto;
-          transform-origin: center center;
-        }
-        
-        .node {
-          position: absolute;
-          background-color: #e0e0e0;
-          border: 2px solid #4caf50;
-          border-radius: 15px;
-          padding: 10px 15px;
-          text-align: center;
+        .knowledge-node {
           transition: transform 0.2s ease, box-shadow 0.2s ease;
-          box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          cursor: grab;
-          position: relative;
         }
         
-        .node:hover {
+        .knowledge-node:hover:not(.locked) {
           transform: scale(1.05);
           box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-          z-index: 10;
+          z-index: 30;
         }
         
-        .node.dragging {
-          cursor: grabbing;
-          opacity: 0.8;
-          z-index: 100;
-        }
-        
-        .node.root {
-          width: 240px;
-          height: 140px;
-          font-size: 24px;
-          font-weight: bold;
-          z-index: 5;
-          background-color: #e8f5e9;
-        }
-        
-        .node.directory {
-          width: 200px;
-          height: 100px;
-          font-size: 18px;
-          font-weight: bold;
-          z-index: 4;
-          background-color: #f0f7f0;
-        }
-        
-        .node.leaf {
-          width: 150px;
-          height: 80px;
-          font-size: 14px;
-          z-index: 3;
-        }
-        
-        .node.expanded {
-          width: 300px;
-          height: auto;
-          min-height: 150px;
-          z-index: 50;
-        }
-        
-        .node .title-input {
-          border: none;
-          background: transparent;
-          font-size: inherit;
-          text-align: center;
-          width: 90%;
-          border-bottom: 1px solid #4caf50;
-          outline: none;
-          margin-bottom: 5px;
-        }
-        
-        .add-button {
-          position: absolute;
-          bottom: -10px;
-          right: -10px;
-          width: 25px;
-          height: 25px;
-          background-color: #4caf50;
-          color: white;
-          border-radius: 50%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-size: 16px;
-          cursor: pointer;
-          box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-          z-index: 6;
-        }
-        
-        .delete-button {
-          position: absolute;
-          top: -10px;
-          right: -10px;
-          width: 25px;
-          height: 25px;
-          background-color: #f44336;
-          color: white;
-          border-radius: 50%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-size: 16px;
-          cursor: pointer;
-          box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-          z-index: 6;
-        }
-        
-        .add-button:hover {
-          background-color: #388e3c;
-        }
-        
-        .delete-button:hover {
-          background-color: #d32f2f;
-        }
-        
-        .progress {
-          margin-top: 5px;
-          padding: 2px 8px;
-          border-radius: 10px;
-          font-size: 14px;
-          font-weight: bold;
-          color: white;
-        }
-        
-        .high {
-          background-color: #4caf50;
-        }
-        
-        .medium {
-          background-color: #ffc107;
-        }
-        
-        .low {
-          background-color: #f44336;
-        }
-        
-        .fraction {
-          font-size: 12px;
-          margin-top: 5px;
-          color: #555;
-          cursor: pointer;
-        }
-        
-        .questions-list {
-          display: none;
-          width: 100%;
-          margin-top: 10px;
-          text-align: left;
-          border-top: 1px solid #ccc;
-          padding-top: 10px;
-        }
-        
-        .questions-list.visible {
-          display: block;
-        }
-        
-        .question-item {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 5px;
-          font-size: 12px;
-        }
-        
-        .question-text {
-          flex-grow: 1;
-          padding-right: 10px;
-        }
-        
-        .question-actions {
-          display: flex;
-          gap: 5px;
-        }
-        
-        .question-actions button {
-          border: none;
-          width: 24px;
-          height: 24px;
-          border-radius: 50%;
-          cursor: pointer;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-size: 10px;
-        }
-        
-        .correct-btn {
-          background-color: #4caf50;
-          color: white;
-        }
-        
-        .wrong-btn {
-          background-color: #f44336;
-          color: white;
-        }
-        
-        .add-question-btn {
-          margin-top: 5px;
-          background-color: #2196f3;
-          color: white;
-          border: none;
-          border-radius: 5px;
-          padding: 3px 8px;
-          font-size: 12px;
-          cursor: pointer;
-        }
-        
-        .connector {
-          position: absolute;
-          background-color: #4caf50;
-          height: 2px;
-          transform-origin: 0 0;
-          z-index: 1;
-          pointer-events: none;
-        }
-        
-        .controls {
-          position: fixed;
-          bottom: 20px;
-          right: 20px;
-          display: flex;
-          gap: 10px;
-          z-index: 1000;
-        }
-        
-        .controls button {
-          padding: 10px 15px;
-          background-color: #4caf50;
-          color: white;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-          font-weight: bold;
-        }
-        
-        .controls button:hover {
-          background-color: #388e3c;
-        }
-        
-        .status {
-          position: fixed;
-          top: 20px;
-          left: 20px;
-          background-color: rgba(255, 255, 255, 0.8);
-          padding: 10px;
-          border-radius: 5px;
-          box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-          z-index: 1000;
-          font-size: 14px;
-        }
-        
-        /* Modal overlays */
-        .node-form-overlay,
-        .question-form-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-color: rgba(0, 0, 0, 0.5);
-          z-index: 1100; /* Increased z-index to ensure it appears above all other elements */
-          justify-content: center;
-          align-items: center;
-        }
-        
-        .node-form,
-        .question-form {
-          background-color: white;
-          padding: 20px;
-          border-radius: 10px;
-          width: 400px;
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-          position: relative; /* Added to ensure proper stacking context */
-          z-index: 1200; /* Increased further to ensure form content is above overlay */
-        }
-        
-        .form-group {
-          margin-bottom: 15px;
-        }
-        
-        .form-group label {
-          display: block;
-          margin-bottom: 5px;
-          font-weight: bold;
-        }
-        
-        .form-group input {
-          width: 100%;
-          padding: 8px;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-        }
-        
-        .radio-group {
-          display: flex;
-          gap: 20px;
-        }
-        
-        .form-actions {
-          display: flex;
-          justify-content: flex-end;
-          gap: 10px;
-          margin-top: 20px;
-        }
-        
-        .form-actions button {
-          padding: 8px 15px;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-        }
-        
-        .form-actions button:first-child {
-          background-color: #4caf50;
-          color: white;
-        }
-        
-        .form-actions button:last-child {
-          background-color: #f44336;
-          color: white;
+        .knowledge-node.locked {
+          cursor: not-allowed;
         }
       `}</style>
     </div>
   );
 };
 
-export default MindMap;
+export default MultivariableCalculusTree;
